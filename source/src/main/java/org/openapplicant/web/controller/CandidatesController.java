@@ -35,7 +35,22 @@ public class CandidatesController extends AdminController {
 	private static final String INDEX_VIEW = "candidates/index";
 	
 	private static final String DETAIL_VIEW = "candidates/detail";
-	
+             /*
+    static JobOpening jobOpening;
+
+    static {
+        JobPosition jobPosition = new JobPosition();
+        jobPosition.setName("Java Developer");
+        ArrayList<JobPosition.Seniority> seniorities = new ArrayList<JobPosition.Seniority>();
+        seniorities.add(JobPosition.Seniority.SEMI_SENIOR);
+        jobPosition.setSeniorities(seniorities);
+        jobOpening = new JobOpening();
+        jobOpening.setStartDate(new Date(2012, 6, 1));
+        jobOpening.setStartDate(new Date(2012, 6, 31));
+    }
+
+	*/
+
 	@RequestMapping(method=GET)
 	public String index(Map<String,Object> model) {
 		return "redirect:active";

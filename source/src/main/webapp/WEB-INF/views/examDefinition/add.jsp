@@ -50,6 +50,14 @@
 					<form:errors cssClass="error" path="numberOfQuestionsWanted"/>
 				</div>
 			</li>
+            <li>
+                <label>Job Position:</label>
+                <div>
+                    <form:input path="jobPosition.name"/>
+                    <form:checkboxes path="jobPosition.seniorities" items="${seniorities}" />
+                    <form:errors cssClass="error" path="jobPosition.name"/>
+                </div>
+            </li>
 			<security:authorize ifNotGranted="<%=ROLE_HR.name()%>">
 			<li class="actions">
 				<input type="submit" value="Save" />

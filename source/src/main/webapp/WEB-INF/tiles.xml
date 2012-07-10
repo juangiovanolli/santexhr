@@ -63,6 +63,7 @@
 	<definition name="sidebar/settings" template="/WEB-INF/views/shared/settingsSidebar.jsp">
 		<put-attribute name="categories" value=""/>
 		<put-attribute name="examDefinitions" value=""/>
+        <put-attribute name="jobPosition" value=""/>
 		<put-attribute name="email" value=""/>
 		<put-attribute name="screening" value=""/>
 		<put-attribute name="users" value=""/>
@@ -79,6 +80,9 @@
 	<definition name="sidebar/settings/category" extends="sidebar/settings">
 		<put-attribute name="categories" value="/WEB-INF/views/category/sidebarComponent.jsp"/>
 	</definition>
+    <definition name="sidebar/settings/jobPosition" extends="sidebar/settings">
+        <put-attribute name="jobPosition" value="/WEB-INF/views/jobPosition/sidebarComponent.jsp"/>
+    </definition>
 	<definition name="sidebar/settings/categories" extends="sidebar/settings">
 		<put-attribute name="categories" value="/WEB-INF/views/categories/sidebarComponent.jsp"/>
 	</definition>
@@ -258,6 +262,18 @@
 		<put-attribute name="sidebar" value="sidebar/settings/categories"/>
 		<put-attribute name="content" value="/WEB-INF/views/categories/index.jsp"/>
 	</definition>
+
+    <!-- JOB POSITIONS -->
+    <definition name="jobPosition/index" extends="application">
+        <put-attribute name="title" value="Santex HR | Job Positions"/>
+        <put-attribute name="sidebar" value="sidebar/settings"/>
+        <put-attribute name="content" value="/WEB-INF/views/jobPositions/index.jsp"/>
+    </definition>
+    <definition name="jobPosition/edit" extends="application">
+        <put-attribute name="title" value="Santex HR | Job Position"/>
+        <put-attribute name="sidebar" value="sidebar/settings/jobPosition"/>
+        <put-attribute name="content" value="/WEB-INF/views/jobPositions/edit.jsp"/>
+    </definition>
 	
 	<!-- CreateAccount -->
 	<definition name="createAccount/index" extends="publicApplication">

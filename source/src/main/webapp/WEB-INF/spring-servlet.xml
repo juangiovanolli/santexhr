@@ -197,7 +197,7 @@
     </bean>
 	
 	<bean id="urlBasedViewResolver"
-		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		class="org.springframework.js.ajax.AjaxUrlBasedViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
 	</bean>
 	

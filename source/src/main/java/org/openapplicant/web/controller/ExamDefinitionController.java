@@ -3,6 +3,7 @@ package org.openapplicant.web.controller;
 import org.openapplicant.domain.Category;
 import org.openapplicant.domain.CategoryPercentage;
 import org.openapplicant.domain.ExamDefinition;
+import org.openapplicant.domain.JobPosition;
 import org.openapplicant.util.Pagination;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -37,6 +38,7 @@ public class ExamDefinitionController extends AdminController {
         model.put("categories", getAdminService().findAllCategoriesByCompany(
                 currentUser().getCompany(),
                 Pagination.oneBased()));
+        model.put("seniorities", JobPosition.Seniority.getList());
 		return "examDefinition/view";
 	}
 	
@@ -146,6 +148,7 @@ public class ExamDefinitionController extends AdminController {
 	@RequestMapping(method=GET)
 	public String add(Map<String, Object> model) {
 		model.put("examDefinition", new ExamDefinition());
+        model.put("seniorities", JobPosition.Seniority.getList());
 		return "examDefinition/add";
 	}
 	
