@@ -201,6 +201,9 @@
 		
 	<bean id="accountCreationTokenDao" class="org.openapplicant.dao.hibernate.AccountCreationTokenDAO"
 		parent="domainObjectDao"/>
+
+    <bean id="jobPositionDao" class="org.openapplicant.dao.hibernate.JobPositionDAO"
+          parent="domainObjectDao"/>
 	
 	<bean id="profileDao" class="org.openapplicant.dao.hibernate.ProfileDAO"
 		parent="domainObjectDao"/>
@@ -247,6 +250,7 @@
 		<property name="sittingDao" ref="sittingDao"/>
 		<property name="userDao" ref="userDao"/>
 		<property name="accountCreationTokenDao" ref="accountCreationTokenDao"/>
+        <property name="jobPositionDao" ref="jobPositionDao"/>
         <property name="taskExecutor" ref="asyncTaskExecutor" />
 	</bean>
 

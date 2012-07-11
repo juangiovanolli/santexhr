@@ -1192,4 +1192,42 @@ public class AdminService extends ApplicationService {
     public List<Candidate> findAllCandidatesByUser(User user) {
         return getCandidateDao().findByUser(user);
     }
+
+    /**
+     * Finds all jobs positions for the given company
+     * @param company
+     * @return
+     */
+    public Collection<JobPosition> findJobPositionsByCompany(Company company) {
+        return getJobPositionDao().findAllByCompany(company);
+    }
+
+    /**
+     * Updates a job position info
+     * @param id
+     * @param name
+     */
+    public void updateJobPositionInfo(Long id, String name) {
+        JobPosition jobPosition = getJobPositionDao().find(id);
+        jobPosition.setName(name);
+        getJobPositionDao().save(jobPosition);
+    }
+
+    /**
+     * Returns a JobPosition instance given by its id
+     * @param id
+     * @return
+     */
+    public JobPosition findJobPositionById(Long id) {
+        return getJobPositionDao().find(id);
+    }
+
+    /**
+     * Saves a job position
+     * @param jobPosition
+     * @return
+     */
+    public JobPosition saveJobPosition(JobPosition jobPosition) {
+        return getJobPositionDao().save(jobPosition);
+    }
 }

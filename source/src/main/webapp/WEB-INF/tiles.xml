@@ -81,7 +81,7 @@
 		<put-attribute name="categories" value="/WEB-INF/views/category/sidebarComponent.jsp"/>
 	</definition>
     <definition name="sidebar/settings/jobPosition" extends="sidebar/settings">
-        <put-attribute name="jobPosition" value="/WEB-INF/views/jobPosition/sidebarComponent.jsp"/>
+        <put-attribute name="jobPosition" value="/WEB-INF/views/jobPositions/sidebarComponent.jsp"/>
     </definition>
 	<definition name="sidebar/settings/categories" extends="sidebar/settings">
 		<put-attribute name="categories" value="/WEB-INF/views/categories/sidebarComponent.jsp"/>
@@ -264,15 +264,15 @@
 	</definition>
 
     <!-- JOB POSITIONS -->
-    <definition name="jobPosition/index" extends="application">
+    <definition name="jobPositions/index" extends="application">
         <put-attribute name="title" value="Santex HR | Job Positions"/>
         <put-attribute name="sidebar" value="sidebar/settings"/>
         <put-attribute name="content" value="/WEB-INF/views/jobPositions/index.jsp"/>
     </definition>
-    <definition name="jobPosition/edit" extends="application">
+    <definition name="jobPositions/view" extends="application">
         <put-attribute name="title" value="Santex HR | Job Position"/>
         <put-attribute name="sidebar" value="sidebar/settings/jobPosition"/>
-        <put-attribute name="content" value="/WEB-INF/views/jobPositions/edit.jsp"/>
+        <put-attribute name="content" value="/WEB-INF/views/jobPositions/view.jsp"/>
     </definition>
 	
 	<!-- CreateAccount -->

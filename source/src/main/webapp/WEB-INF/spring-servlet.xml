@@ -29,6 +29,7 @@
 				/admin/forgotPassword/*=forgotPasswordController
 				/admin/createAccount/*=createAccountController
 				/admin/help/*=helpController
+                /admin/jobPositions/*=jobPositionController
 				/admin/screening/*=screeningController
 				/admin/settings/*=settingsController
 				/admin/results/*=resultsController
@@ -135,6 +136,10 @@
 	
 	<bean id="helpController"
 		class="org.openapplicant.web.controller.HelpController"/>
+
+    <bean id="jobPositionController"
+          class="org.openapplicant.web.controller.JobPositionController"
+          parent="adminController"/>
 	
 	<bean id="loginController"
 		class="org.springframework.web.servlet.mvc.ParameterizableViewController">

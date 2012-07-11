@@ -29,7 +29,7 @@
 				<tiles:insertAttribute name="examDefinitions"/>
 			</li>
             <li class="exam ${jobPositionsSidebar?'selected':''}">
-                <a href="<c:url value='/admin/jobPosition/index' />">
+                <a href="<c:url value='/admin/jobPositions/index' />">
                     Job Positions
                 </a>
                 <tiles:insertAttribute name="jobPosition"/>

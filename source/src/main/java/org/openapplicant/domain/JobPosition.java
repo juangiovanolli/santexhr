@@ -4,6 +4,7 @@ import org.hibernate.validator.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * User: Gian Franco Zabarino
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
 @Entity
 public class JobPosition extends DomainObject {
     private String name;
+    private Company company;
 
     @Column(nullable = false)
     @NotEmpty
@@ -22,5 +24,14 @@ public class JobPosition extends DomainObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @ManyToOne
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

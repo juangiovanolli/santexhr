@@ -58,6 +58,8 @@ public abstract class ApplicationService {
 	private IUserDAO userDao;
 	
 	private IAccountCreationTokenDAO accountCreationTokenDao;
+
+    private IJobPositionDAO jobPositionDao;
 	
 	private MailSender mailSender;
 
@@ -227,6 +229,15 @@ public abstract class ApplicationService {
 	public void setUserDao(IUserDAO value) {
 		userDao = value;
 	}
+
+    IJobPositionDAO getJobPositionDao() {
+        return jobPositionDao;
+    }
+
+    @Required
+    public void setJobPositionDao(IJobPositionDAO value) {
+        this.jobPositionDao = value;
+    }
 	
 	public void setAccountCreationTokenDao(IAccountCreationTokenDAO accountCreationTokenDao) {
 		this.accountCreationTokenDao = accountCreationTokenDao;

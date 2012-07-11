@@ -15,7 +15,7 @@
         <div>
             <h1 class="action">
                 <img src="<c:url value='/img/settings/new-test.png' />" />
-                <a href="<c:url value='/admin/jobPosition/add' />">Create New Job Position</a>
+                <a href="<c:url value='/admin/jobPositions/view' />">Create New Job Position</a>
             </h1>
         </div>
     </security:authorize>
