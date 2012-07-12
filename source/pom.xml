@@ -11,6 +11,9 @@
 	<name>SantexHR</name>
 	<url>http://www.santex.com/</url>
 
+	<repositories>
+	</repositories>
+
 	<pluginRepositories>
 	  <pluginRepository>
 		 <id>codehaus snapshot repository</id>
@@ -284,7 +287,7 @@
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>jstl</artifactId>
 		    <version>1.2</version>
-		    <scope>provided</scope>
+		    
 		</dependency>
 		<dependency>
 		    <groupId>javax.servlet</groupId>
@@ -333,6 +336,11 @@
             <artifactId>displaytag-export-poi</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.20</version>
+		</dependency>
   </dependencies>
 	<build>
 		<resources>

@@ -355,6 +355,7 @@ public class CategoryController extends AdminController {
             @RequestParam("answerIndex") Integer answerIndex,
             @RequestParam("timeAllowed") Integer timeAllowed,
             @RequestParam(required=false, value="choices") List<String> choices,
+            @RequestParam(required = false, value = "n") Boolean isNew,
             Map<String, Object> model) {
         MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();
         multipleChoiceQuestion.setArtifactId(questionArtifactId);
@@ -369,6 +370,7 @@ public class CategoryController extends AdminController {
             Category category = getAdminService().findCategoryById(categoryId);
             model.put("category", category);
         }
+        model.put("isNew", isNew);
         return "category/multipleChoiceQuestion";
     }
 
@@ -382,6 +384,7 @@ public class CategoryController extends AdminController {
             @RequestParam("answerIndex") Integer answerIndex,
             @RequestParam("timeAllowed") Integer timeAllowed,
             @RequestParam(required=false, value="choices") List<String> choices,
+            @RequestParam(required = false, value = "n") Boolean isNew,
             Map<String, Object> model) {
         MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();
         multipleChoiceQuestion.setArtifactId(questionArtifactId);
@@ -396,6 +399,7 @@ public class CategoryController extends AdminController {
             Category category = getAdminService().findCategoryById(categoryId);
             model.put("category", category);
         }
+        model.put("isNew", isNew);
         return "category/multipleChoiceQuestion";
     }
 
