@@ -66,4 +66,9 @@ public class JobPosition extends DomainObject {
         }
         return s.toString();
     }
+
+    @Transient
+    public String getTitle() {
+        return toString();
+    }
 }

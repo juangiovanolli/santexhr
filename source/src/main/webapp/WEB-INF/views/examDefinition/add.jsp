@@ -53,7 +53,7 @@
             <li>
                 <label>Job Position:</label>
                 <div>
-                    <form:select path="jobPosition" items="${jobPositions}" />
+                    <form:select path="jobPosition" items="${jobPositions}" itemLabel="title" />
                 </div>
             </li>
 			<security:authorize ifNotGranted="<%=ROLE_HR.name()%>">

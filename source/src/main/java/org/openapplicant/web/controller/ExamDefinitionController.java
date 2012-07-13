@@ -175,6 +175,7 @@ public class ExamDefinitionController extends AdminController {
         model.put("categories", getAdminService().findAllCategoriesByCompany(
                 currentUser().getCompany(),
                 Pagination.oneBased()));
+        model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
 		return "examDefinition/view";
 	}
 
@@ -188,6 +189,7 @@ public class ExamDefinitionController extends AdminController {
         model.put("categories", getAdminService().findAllCategoriesByCompany(
                 currentUser().getCompany(),
                 Pagination.oneBased()));
+        model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
         return "examDefinition/view";
     }
 	
