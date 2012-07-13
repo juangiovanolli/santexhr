@@ -1,6 +1,8 @@
 package org.openapplicant.web.controller;
 
 import org.openapplicant.domain.JobPosition;
+import org.openapplicant.util.Messages;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -65,5 +67,16 @@ public class JobPositionController extends AdminController {
         }
         model.put("jobPosition", jobPosition);
         return "jobPositions/view";
+    }
+
+    @RequestMapping(method = POST)
+    public String deleteJobPosition(@RequestParam("jp") Long id,
+                                    Map<String, Object> model) {
+        try {
+            getAdminService().deleteJobPositionWithId(id);
+        } catch (DataIntegrityViolationException e) {
+            model.put("error", Messages.getJobPositionDeleteDataIntegrityViolationExceptionText());
+        }
+        return index(model);
     }
 }

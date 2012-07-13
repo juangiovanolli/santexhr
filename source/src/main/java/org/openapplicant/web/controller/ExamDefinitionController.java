@@ -1,8 +1,6 @@
 package org.openapplicant.web.controller;
 
-import org.openapplicant.domain.Category;
-import org.openapplicant.domain.CategoryPercentage;
-import org.openapplicant.domain.ExamDefinition;
+import org.openapplicant.domain.*;
 import org.openapplicant.util.Pagination;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -37,6 +35,8 @@ public class ExamDefinitionController extends AdminController {
         model.put("categories", getAdminService().findAllCategoriesByCompany(
                 currentUser().getCompany(),
                 Pagination.oneBased()));
+        model.put("seniorities", Seniority.getList());
+        model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
 		return "examDefinition/view";
 	}
 	
@@ -138,7 +138,9 @@ public class ExamDefinitionController extends AdminController {
 				cmd.getDescription(),
 				cmd.getNumberOfQuestionsWanted(),
 				cmd.isActive(),
-                cmd.getCategoriesPercentage()
+                cmd.getCategoriesPercentage(),
+                cmd.getJobPosition(),
+                cmd.getSeniorities()
 		);
 		return "redirect:view?ed="+cmd.getArtifactId();
 	}
@@ -146,6 +148,8 @@ public class ExamDefinitionController extends AdminController {
 	@RequestMapping(method=GET)
 	public String add(Map<String, Object> model) {
 		model.put("examDefinition", new ExamDefinition());
+        model.put("seniorities", Seniority.getList());
+        model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
 		return "examDefinition/add";
 	}
 	
@@ -232,6 +236,20 @@ public class ExamDefinitionController extends AdminController {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
                 setValue(getAdminService().findCategoryById(Long.parseLong(text)));
+            }
+        });
+        binder.registerCustomEditor(JobPosition.class, new PropertyEditorSupport() {
+            @Override
+            public String getAsText() {
+                if (getValue() != null) {
+                    return ((JobPosition)getValue()).getId().toString();
+                }
+                return null;
+            }
+
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(getAdminService().findJobPositionById(Long.parseLong(text)));
             }
         });
     }

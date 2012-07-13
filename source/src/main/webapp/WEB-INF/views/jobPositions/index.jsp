@@ -43,6 +43,9 @@
         </c:forEach>
         </tbody>
     </table>
+    <c:if test="${!(error eq null)}">
+        <span class="error"><c:out value="${error}"/></span>
+    </c:if>
 </div>
 
 <script type="text/javascript">
@@ -62,7 +65,7 @@
                             $.ajax({
                                 type:'POST',
                                 url: '<c:url value="deleteJobPosition"/>',
-                                data:{jd:jobPositionId},
+                                data:{jp:jobPositionId},
                                 success:function(html) {
                                     document.documentElement.innerHTML = html;
                                     applyOrder();

@@ -937,13 +937,15 @@ public class AdminService extends ApplicationService {
 	@Transactional(isolation=Isolation.SERIALIZABLE)
 	public void updateExamDefinitionInfo(String examDefinitionArtifactId, String name,
 			String genre, String description, Integer numberOfQuestionsWanted, boolean isActive,
-            List<CategoryPercentage> categoriesPercentage) {
+            List<CategoryPercentage> categoriesPercentage, JobPosition jobPosition, Set<Seniority> seniorities) {
 		ExamDefinition examDefinition = findExamDefinitionByArtifactId(examDefinitionArtifactId);
 		examDefinition.setName(name);
 		examDefinition.setGenre(genre);
 		examDefinition.setDescription(description);
 		examDefinition.setNumberOfQuestionsWanted(numberOfQuestionsWanted);
 		examDefinition.setActive(isActive);
+        examDefinition.setJobPosition(jobPosition);
+        examDefinition.setSeniorities(seniorities);
         // Delete not present categories percentage
         List<CategoryPercentage> currentCategoriesPercentage = examDefinition.getCategoriesPercentage();
         for (int i = 0; i < currentCategoriesPercentage.size(); i++) {
@@ -1229,5 +1231,13 @@ public class AdminService extends ApplicationService {
      */
     public JobPosition saveJobPosition(JobPosition jobPosition) {
         return getJobPositionDao().save(jobPosition);
+    }
+
+    /**
+     * Deletes a job positions with the given id
+     * @param id
+     */
+    public void deleteJobPositionWithId(Long id) {
+        getJobPositionDao().delete(id);
     }
 }

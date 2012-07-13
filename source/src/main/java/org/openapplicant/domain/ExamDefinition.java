@@ -27,7 +27,7 @@ public class ExamDefinition extends DomainObject {
 	private String name = "";
 	private boolean active = false;
 	private Integer numberOfQuestionsWanted = 1;
-    private JobPosition jobPosition = new JobPosition();
+    private JobPosition jobPosition;
     private Set<Seniority> seniorities;
 	
 	@Transient
@@ -176,7 +176,6 @@ public class ExamDefinition extends DomainObject {
 	}
 
     @ManyToOne
-    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     public JobPosition getJobPosition() {
         return jobPosition;
     }

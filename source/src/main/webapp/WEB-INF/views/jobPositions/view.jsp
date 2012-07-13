@@ -20,7 +20,7 @@
                 </li>
                 <li class="actions">
                     <input type="submit" class="submit" name="save" value="Save"/>
-                    <input type="submit" class="submit" name="cancel" value="Cancel"/>.
+                    <input type="submit" class="submit" name="cancel" value="Cancel"/>
                 </li>
             </ul>
         </div>
