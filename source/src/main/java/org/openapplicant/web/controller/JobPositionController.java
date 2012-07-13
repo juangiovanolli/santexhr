@@ -2,6 +2,8 @@ package org.openapplicant.web.controller;
 
 import org.openapplicant.domain.JobPosition;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +27,7 @@ public class JobPositionController extends AdminController {
 	}
 
     @RequestMapping(method = GET)
-    public String view(@RequestParam(required = false) Long id,
+    public String view(@RequestParam(required = false, value = "jp") Long id,
                        Map<String, Object> model) {
         if (id != null && id > 0) {
             model.put("jobPosition", getAdminService().findJobPositionById(id));
@@ -38,18 +40,30 @@ public class JobPositionController extends AdminController {
     @RequestMapping(method = POST)
     public String update(
             @ModelAttribute JobPosition jobPosition,
+            BindingResult bindingResult,
             @RequestParam(required = false) String save,
             Map<String, Object> model) {
         if (save == null) {
             return "redirect:index";
         }
         if (jobPosition.getId() != null && jobPosition.getId() > 0) {
-            getAdminService().updateJobPositionInfo(jobPosition.getId(), jobPosition.getName());
+            Errors errors = jobPosition.validate();
+            if (!errors.hasErrors()) {
+                getAdminService().updateJobPositionInfo(jobPosition.getId(), jobPosition.getName());
+            } else {
+                bindingResult.addAllErrors(errors);
+            }
         } else {
-            jobPosition = getAdminService().saveJobPosition(jobPosition);
+            jobPosition.setCompany(currentUser().getCompany());
+            Errors errors = jobPosition.validate();
+            if (!errors.hasErrors()) {
+                jobPosition = getAdminService().saveJobPosition(jobPosition);
+                model.put("success", true);
+            } else {
+                bindingResult.addAllErrors(errors);
+            }
         }
         model.put("jobPosition", jobPosition);
-        model.put("success", true);
         return "jobPositions/view";
     }
 }

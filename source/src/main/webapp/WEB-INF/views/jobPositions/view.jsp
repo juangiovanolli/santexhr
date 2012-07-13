@@ -9,19 +9,26 @@
 
     <form:form action="update" commandName="jobPosition">
         <form:hidden path="id"/>
-        <ul class="half left">
-            <li>
-                <label>Name:</label>
-                <div>
-                    <form:input path="name"/>
-                    <form:errors path="name" cssClass="error"/>
-                </div>
-            </li>
-            <li class="actions">
-                <input type="submit" class="submit" name="save" value="Save"/>
-                <input type="submit" class="submit" name="cancel" value="Cancel"/>.
-            </li>
-        </ul>
+        <div class="row">
+            <ul class="half left">
+                <li>
+                    <label>Name:</label>
+                    <div>
+                        <form:input path="name"/>
+                        <form:errors path="name" cssClass="error"/>
+                    </div>
+                </li>
+                <li class="actions">
+                    <input type="submit" class="submit" name="save" value="Save"/>
+                    <input type="submit" class="submit" name="cancel" value="Cancel"/>.
+                </li>
+            </ul>
+        </div>
+        <c:if test="${!(success eq null)}">
+        <div class="success">
+            <span class="">The Job Position was created successfully!</span>
+        </div>
+        </c:if>
     </form:form>
 
     <security:authorize ifAllGranted="<%=ROLE_HR.name()%>">

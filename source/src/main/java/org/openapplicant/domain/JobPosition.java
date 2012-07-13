@@ -1,10 +1,10 @@
 package org.openapplicant.domain;
 
 import org.hibernate.validator.NotEmpty;
+import org.openapplicant.validation.Unique;
+import org.openapplicant.validation.UniqueWith;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * User: Gian Franco Zabarino
@@ -12,12 +12,16 @@ import javax.persistence.ManyToOne;
  * Time: 10:06 AM
  */
 @Entity
+@Table(
+        uniqueConstraints={@UniqueConstraint(columnNames={"name", "company"})}
+)
 public class JobPosition extends DomainObject {
     private String name;
     private Company company;
 
     @Column(nullable = false)
     @NotEmpty
+    @UniqueWith("company.id")
     public String getName() {
         return name;
     }
@@ -26,7 +30,7 @@ public class JobPosition extends DomainObject {
         this.name = name;
     }
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     public Company getCompany() {
         return company;
     }

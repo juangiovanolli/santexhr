@@ -30,7 +30,7 @@
         <c:forEach var="jp" items="${jobPositions}">
             <tr>
                 <td>
-                    <a href="<c:url value='/admin/jobPosition/edit?ed=${jp.id}'/>">
+                    <a href="<c:url value='/admin/jobPositions/view?jp=${jp.id}'/>">
                         <c:out value="${tt:abbreviateTo(jp.name, 45)}"/>
                     </a>
                 </td>
