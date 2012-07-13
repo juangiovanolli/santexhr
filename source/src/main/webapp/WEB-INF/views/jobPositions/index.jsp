@@ -31,7 +31,7 @@
             <tr>
                 <td>
                     <a href="<c:url value='/admin/jobPositions/view?jp=${jp.id}'/>">
-                        <c:out value="${tt:abbreviateTo(jp.name, 45)}"/>
+                        <c:out value="${tt:abbreviateTo(jp, 45)}"/>
                     </a>
                 </td>
                 <td>

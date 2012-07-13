@@ -28,7 +28,6 @@ public class ExamDefinition extends DomainObject {
 	private boolean active = false;
 	private Integer numberOfQuestionsWanted = 1;
     private JobPosition jobPosition;
-    private Set<Seniority> seniorities;
 	
 	@Transient
 	public boolean isComplete() {
@@ -182,16 +181,6 @@ public class ExamDefinition extends DomainObject {
 
     public void setJobPosition(JobPosition jobPosition) {
         this.jobPosition = jobPosition;
-    }
-
-    @CollectionOfElements
-    @Enumerated(value = EnumType.STRING)
-    public Set<Seniority> getSeniorities() {
-        return seniorities;
-    }
-
-    public void setSeniorities(Set<Seniority> seniorities) {
-        this.seniorities = seniorities;
     }
 
     /**

@@ -18,6 +18,12 @@
                         <form:errors path="name" cssClass="error"/>
                     </div>
                 </li>
+                <li>
+                    <label>Seniorities:</label>
+                    <div>
+                        <form:checkboxes path="seniorities" items="${seniorities}" />
+                    </div>
+                </li>
                 <li class="actions">
                     <input type="submit" class="submit" name="save" value="Save"/>
                     <input type="submit" class="submit" name="cancel" value="Cancel"/>

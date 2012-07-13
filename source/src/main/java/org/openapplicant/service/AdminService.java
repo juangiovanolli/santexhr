@@ -937,7 +937,7 @@ public class AdminService extends ApplicationService {
 	@Transactional(isolation=Isolation.SERIALIZABLE)
 	public void updateExamDefinitionInfo(String examDefinitionArtifactId, String name,
 			String genre, String description, Integer numberOfQuestionsWanted, boolean isActive,
-            List<CategoryPercentage> categoriesPercentage, JobPosition jobPosition, Set<Seniority> seniorities) {
+            List<CategoryPercentage> categoriesPercentage, JobPosition jobPosition) {
 		ExamDefinition examDefinition = findExamDefinitionByArtifactId(examDefinitionArtifactId);
 		examDefinition.setName(name);
 		examDefinition.setGenre(genre);
@@ -945,7 +945,6 @@ public class AdminService extends ApplicationService {
 		examDefinition.setNumberOfQuestionsWanted(numberOfQuestionsWanted);
 		examDefinition.setActive(isActive);
         examDefinition.setJobPosition(jobPosition);
-        examDefinition.setSeniorities(seniorities);
         // Delete not present categories percentage
         List<CategoryPercentage> currentCategoriesPercentage = examDefinition.getCategoriesPercentage();
         for (int i = 0; i < currentCategoriesPercentage.size(); i++) {
@@ -1209,9 +1208,10 @@ public class AdminService extends ApplicationService {
      * @param id
      * @param name
      */
-    public void updateJobPositionInfo(Long id, String name) {
+    public void updateJobPositionInfo(Long id, String name, Set<Seniority> seniorities) {
         JobPosition jobPosition = getJobPositionDao().find(id);
         jobPosition.setName(name);
+        jobPosition.setSeniorities(seniorities);
         getJobPositionDao().save(jobPosition);
     }
 

@@ -1,10 +1,10 @@
 package org.openapplicant.domain;
 
-import org.hibernate.annotations.CollectionOfElements;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * User: Gian Franco Zabarino
@@ -18,7 +18,6 @@ public class JobOpening extends DomainObject {
     private Date finishDate = new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY * 14);
     private Status status = Status.CREATED;
     private JobPosition jobPosition;
-    private Set<Seniority> seniorities;
     private String description;
 
     @Transient
@@ -70,16 +69,6 @@ public class JobOpening extends DomainObject {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @CollectionOfElements
-    @Enumerated(value = EnumType.STRING)
-    public Set<Seniority> getSeniorities() {
-        return seniorities;
-    }
-
-    public void setSeniorities(Set<Seniority> seniorities) {
-        this.seniorities = seniorities;
     }
 
     //========================================================================

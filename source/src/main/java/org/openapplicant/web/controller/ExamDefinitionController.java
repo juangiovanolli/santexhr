@@ -35,7 +35,6 @@ public class ExamDefinitionController extends AdminController {
         model.put("categories", getAdminService().findAllCategoriesByCompany(
                 currentUser().getCompany(),
                 Pagination.oneBased()));
-        model.put("seniorities", Seniority.getList());
         model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
 		return "examDefinition/view";
 	}
@@ -139,8 +138,7 @@ public class ExamDefinitionController extends AdminController {
 				cmd.getNumberOfQuestionsWanted(),
 				cmd.isActive(),
                 cmd.getCategoriesPercentage(),
-                cmd.getJobPosition(),
-                cmd.getSeniorities()
+                cmd.getJobPosition()
 		);
 		return "redirect:view?ed="+cmd.getArtifactId();
 	}
@@ -148,7 +146,6 @@ public class ExamDefinitionController extends AdminController {
 	@RequestMapping(method=GET)
 	public String add(Map<String, Object> model) {
 		model.put("examDefinition", new ExamDefinition());
-        model.put("seniorities", Seniority.getList());
         model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
 		return "examDefinition/add";
 	}

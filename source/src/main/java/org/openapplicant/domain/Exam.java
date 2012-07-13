@@ -29,8 +29,6 @@ public class Exam extends DomainObject {
 
     private JobPosition jobPosition;
 
-    private Set<Seniority> seniorities;
-
 	/**
 	 * @return the artifactId of this exam.
 	 */
@@ -172,15 +170,5 @@ public class Exam extends DomainObject {
 
     public void setJobPosition(JobPosition jobPosition) {
         this.jobPosition = jobPosition;
-    }
-
-    @CollectionOfElements
-    @Enumerated(value = EnumType.STRING)
-    public Set<Seniority> getSeniorities() {
-        return seniorities;
-    }
-
-    public void setSeniorities(Set<Seniority> seniorities) {
-        this.seniorities = seniorities;
     }
 }

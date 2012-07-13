@@ -1,15 +1,20 @@
 package org.openapplicant.web.controller;
 
 import org.openapplicant.domain.JobPosition;
+import org.openapplicant.domain.Seniority;
 import org.openapplicant.util.Messages;
+import org.openapplicant.util.Strings;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.beans.PropertyEditorSupport;
 import java.util.Collection;
 import java.util.Map;
 
@@ -36,6 +41,7 @@ public class JobPositionController extends AdminController {
         } else {
             model.put("jobPosition", new JobPosition());
         }
+        model.put("seniorities", Seniority.getList());
         return "jobPositions/view";
     }
 
@@ -51,7 +57,7 @@ public class JobPositionController extends AdminController {
         if (jobPosition.getId() != null && jobPosition.getId() > 0) {
             Errors errors = jobPosition.validate();
             if (!errors.hasErrors()) {
-                getAdminService().updateJobPositionInfo(jobPosition.getId(), jobPosition.getName());
+                getAdminService().updateJobPositionInfo(jobPosition.getId(), jobPosition.getName(), jobPosition.getSeniorities());
             } else {
                 bindingResult.addAllErrors(errors);
             }
@@ -65,6 +71,7 @@ public class JobPositionController extends AdminController {
                 bindingResult.addAllErrors(errors);
             }
         }
+        model.put("seniorities", Seniority.getList());
         model.put("jobPosition", jobPosition);
         return "jobPositions/view";
     }
@@ -78,5 +85,15 @@ public class JobPositionController extends AdminController {
             model.put("error", Messages.getJobPositionDeleteDataIntegrityViolationExceptionText());
         }
         return index(model);
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Seniority.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(Seniority.valueOf(Strings.dehumanize(text)));
+            }
+        });
     }
 }

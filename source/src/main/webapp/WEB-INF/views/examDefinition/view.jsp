@@ -66,8 +66,7 @@
             <li>
                 <label>Job Position:</label>
                 <div>
-                    <form:select path="jobPosition" items="${jobPositions}" itemLabel="name"/>
-                    <form:checkboxes path="seniorities" items="${seniorities}" />
+                    <form:select path="jobPosition" items="${jobPositions}"/>
                 </div>
             </li>
 		</ul>
