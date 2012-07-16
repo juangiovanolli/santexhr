@@ -1240,4 +1240,49 @@ public class AdminService extends ApplicationService {
     public void deleteJobPositionWithId(Long id) {
         getJobPositionDao().delete(id);
     }
+
+    /**
+     * Returns all job openings from the given company
+     * @param company
+     * @return
+     */
+    public List<JobOpening> findAllJobOpeningsByCompany(Company company) {
+        return getJobOpeningDao().findAllByCompany(company);
+    }
+
+    /**
+     * Returns active job openings from the given company
+     * @param company
+     * @return
+     */
+    public List<JobOpening> findActiveJobOpeningsByCompany(Company company) {
+        return getJobOpeningDao().findActiveByCompany(company);
+    }
+
+    /**
+     * Returns archived job openings from the given company
+     * @param company
+     * @return
+     */
+    public List<JobOpening> findArchivedJobOpeningsByCompany(Company company) {
+        return getJobOpeningDao().findArchivedByCompany(company);
+    }
+
+    /**
+     * Returns job openings from the given company with the given status
+     * @param company
+     * @return
+     */
+    public List<JobOpening> findJobOpeningsByCompanyAndStatus(Company company, JobOpening.Status status) {
+        return getJobOpeningDao().findByCompanyAndStatus(company, status);
+    }
+
+    /**
+     * Returns the job opening with the given id
+     * @param jobOpeningId
+     * @return
+     */
+    public JobOpening findJobOpeningById(Long jobOpeningId) {
+        return getJobOpeningDao().find(jobOpeningId);
+    }
 }

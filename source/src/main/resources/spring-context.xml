@@ -74,6 +74,7 @@
 		<sec:intercept-url pattern="/admin/category/**" access="ROLE_ADMIN, ROLE_SETTINGS, ROLE_GRADER"/>
 		<sec:intercept-url pattern="/admin/candidates/**" access="ROLE_ADMIN, ROLE_HR, ROLE_GRADER"/>
 		<sec:intercept-url pattern="/admin/candidate/**" access="ROLE_ADMIN, ROLE_HR"/>
+        <sec:intercept-url pattern="/admin/jobPositions/**" access="ROLE_ADMIN, ROLE_HR, ROLE_GRADER"/>
 		<sec:intercept-url pattern="/admin/results/**" access="ROLE_ADMIN, ROLE_GRADER"/>
 		<sec:intercept-url pattern="/**" access="ROLE_ADMIN, ROLE_HR, ROLE_GRADER, ROLE_SETTINGS"/>
 		
@@ -204,6 +205,9 @@
 
     <bean id="jobPositionDao" class="org.openapplicant.dao.hibernate.JobPositionDAO"
           parent="domainObjectDao"/>
+
+    <bean id="jobOpeningDao" class="org.openapplicant.dao.hibernate.JobOpeningDAO"
+          parent="domainObjectDao"/>
 	
 	<bean id="profileDao" class="org.openapplicant.dao.hibernate.ProfileDAO"
 		parent="domainObjectDao"/>
@@ -251,6 +255,7 @@
 		<property name="userDao" ref="userDao"/>
 		<property name="accountCreationTokenDao" ref="accountCreationTokenDao"/>
         <property name="jobPositionDao" ref="jobPositionDao"/>
+        <property name="jobOpeningDao" ref="jobOpeningDao"/>
         <property name="taskExecutor" ref="asyncTaskExecutor" />
 	</bean>
 
