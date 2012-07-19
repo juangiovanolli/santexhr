@@ -1285,4 +1285,33 @@ public class AdminService extends ApplicationService {
     public JobOpening findJobOpeningById(Long jobOpeningId) {
         return getJobOpeningDao().find(jobOpeningId);
     }
+
+    /**
+     * Updates a job opening information
+     * @param id
+     * @param jobPosition
+     * @param finishDate
+     * @param client
+     * @param description
+     * @param applicants
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void updateJobOpeningInfo(Long id, JobPosition jobPosition, Date finishDate, String client, String description, Set<Candidate> applicants) {
+        JobOpening jobOpening = getJobOpeningDao().find(id);
+        jobOpening.setJobPosition(jobPosition);
+        jobOpening.setFinishDate(finishDate);
+        jobOpening.setClient(client);
+        jobOpening.setDescription(description);
+        jobOpening.setApplicants(applicants);
+        getJobOpeningDao().save(jobOpening);
+    }
+
+    /**
+     * Saves a job opening
+     * @param jobOpening
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void saveJobOpening(JobOpening jobOpening) {
+        getJobOpeningDao().save(jobOpening);
+    }
 }

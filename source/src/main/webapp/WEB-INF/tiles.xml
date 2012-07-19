@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
-       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 <tiles-definitions>
 	
 	<!--
@@ -292,6 +292,17 @@
         <put-attribute name="sidebar" value="sidebar/jobOpenings"/>
         <put-attribute name="content" value="/WEB-INF/views/jobOpenings/index.jsp"/>
     </definition>
+    <definition name="jobOpenings/view" extends="application">
+        <put-attribute name="title" value="Santex HR | Job Opening"/>
+        <put-attribute name="sidebar" value="sidebar/jobOpenings"/>
+        <put-attribute name="content">
+            <definition template="/WEB-INF/views/jobOpenings/view.jsp">
+                <put-attribute name="applicants" value="jobOpenings/applicants"/>
+            </definition>
+        </put-attribute>
+    </definition>
+    <definition name="jobOpenings/applicants" template="/WEB-INF/views/jobOpenings/applicants.jsp"/>
+    <definition name="jobOpenings/candidates" template="/WEB-INF/views/jobOpenings/selectCandidates.jsp"/>
 	
 	<!-- CreateAccount -->
 	<definition name="createAccount/index" extends="publicApplication">

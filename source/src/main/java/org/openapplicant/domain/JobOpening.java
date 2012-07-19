@@ -1,12 +1,10 @@
 package org.openapplicant.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: Gian Franco Zabarino
@@ -17,11 +15,13 @@ import java.util.List;
 public class JobOpening extends DomainObject {
     private final static long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
     private Company company;
+    private JobPosition jobPosition;
+    private String client;
     private Date startDate = new Date();
     private Date finishDate = new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY * 14);
     private Status status = Status.NEW;
-    private JobPosition jobPosition;
     private String description;
+    private Set<Candidate> applicants;
 
     @Transient
     public Boolean isOpen() {
@@ -74,13 +74,31 @@ public class JobOpening extends DomainObject {
         this.description = description;
     }
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     public Company getCompany() {
         return company;
     }
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    @Column
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    @ManyToMany
+    public Set<Candidate> getApplicants() {
+        return applicants;
+    }
+
+    public void setApplicants(Set<Candidate> applicants) {
+        this.applicants = applicants;
     }
 
     //========================================================================
