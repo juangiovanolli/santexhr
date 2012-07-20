@@ -138,6 +138,14 @@
 	
 	<bean id="helpController"
 		class="org.openapplicant.web.controller.HelpController"/>
+
+    <bean id="jobOpeningController"
+          class="org.openapplicant.web.controller.JobOpeningController"
+          parent="adminController"/>
+
+    <bean id="jobPositionController"
+          class="org.openapplicant.web.controller.JobPositionController"
+          parent="adminController"/>
 	
 	<bean id="loginController"
 		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
