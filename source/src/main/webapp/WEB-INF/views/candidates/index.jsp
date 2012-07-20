@@ -224,11 +224,13 @@
             </c:if>
         </display:column>
         </security:authorize>
-        <display:column media="html" headerClass="icon header" class="icon" title="<img src=\"${pageContext.request.contextPath}/img/table/packet.gif\" title=\"Sort by Printable Packet\"/>">
-            <a href="<c:url value='/admin/report.pdf?candidate=${c.id}' />">
-                <img src="<c:url value='/img/table/packet.gif'/>" title="${tt:abbreviateTo(c.name.first,15)}'s Packet"/>
-            </a>
-        </display:column>
+        <security:authorize ifAnyGranted="<%=ROLE_HR_MANAGER.name() + \",\" + ROLE_HR.name() %>">
+	        <display:column media="html" headerClass="icon header" class="icon" title="<img src=\"${pageContext.request.contextPath}/img/table/packet.gif\" title=\"Sort by Printable Packet\"/>">
+	            <a href="<c:url value='/admin/report.pdf?candidate=${c.id}' />">
+	                <img src="<c:url value='/img/table/packet.gif'/>" title="${tt:abbreviateTo(c.name.first,15)}'s Packet"/>
+	            </a>
+	        </display:column>
+        </security:authorize>
         <display:column media="html" headerClass="icon header" class="icon" title="<img src=\"${pageContext.request.contextPath}/img/table/archive.gif\" title=\"Sort by Archive\"/>">
             <a class="tooltip" rel="#tooltip_${c.id }" title="Move to">
                 <img src="<c:url value='/img/table/archive.gif'/>"/>

@@ -40,6 +40,7 @@
 				/admin/users/*=usersController
        			/admin/report.pdf=reportController
        			/admin/file*=attachmentController
+       			/admin/reports/*=reportController
 				
 				/dwr/call/**=dwrController
 				/dwr/interface/**=dwrController
@@ -137,14 +138,6 @@
 	
 	<bean id="helpController"
 		class="org.openapplicant.web.controller.HelpController"/>
-
-    <bean id="jobOpeningController"
-          class="org.openapplicant.web.controller.JobOpeningController"
-          parent="adminController"/>
-
-    <bean id="jobPositionController"
-          class="org.openapplicant.web.controller.JobPositionController"
-          parent="adminController"/>
 	
 	<bean id="loginController"
 		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
@@ -207,7 +200,7 @@
     </bean>
 	
 	<bean id="urlBasedViewResolver"
-		class="org.springframework.js.ajax.AjaxUrlBasedViewResolver">
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
 	</bean>
 	
