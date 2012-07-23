@@ -8,6 +8,16 @@
     .noneDisplay {
         display: none;
     }
+    table.sortable {
+        border-left: 1px solid #B1B1B1 !important;
+    }
+    #content {
+        overflow-y: auto !important;
+        height: auto !important;
+    }
+</style>
+<style type="text/css">
+    @import "<c:url value='/css/layout/candidate_list.css'/>";
 </style>
 <div id="content">
     <form:form modelAttribute="jobOpening" action="update" id="formId">
@@ -63,7 +73,7 @@
         </ul>
         <c:if test="${!(success eq null)}">
          <div class="row">
-            <span class="success">The job opening was saved successfully!</span>
+            <span class="success">The Job Opening was saved successfully!</span>
          </div>
         </c:if>
     </form:form>
@@ -84,26 +94,27 @@
     $('#finishDate').datepicker($.datepicker.regional['${fn:substring(pageContext.response.locale,0,2)}']);</c:when><c:otherwise>$('#finishDate').datepicker();</c:otherwise></c:choose>
 
     var onLoad = function() {
-
-        $('.candidate_name').cluetip({
-            width:425,
-            cluetipClass:'history',
-            ajaxSettings: {
-                type: 'POST'
-            }
-        });
-
-        $('.tooltip').each( function() {
-            var activation = $(this).hasClass('hover') ? 'hover' : 'click';
-            $(this).cluetip({
-                activation: activation,
-                width:175,
-                cluetipClass:'jtip',
-                local:true,
-                arrows:true,
-                closeText: '<img src="<c:url value="/img/jquery_cluetip/close-gray.png"/>"/>'
+        $.clueTips = function() {
+            $('.candidate_name').cluetip({
+                width:425,
+                cluetipClass:'history',
+                ajaxSettings: {
+                    type: 'POST'
+                }
             });
-        });
+
+            $('.tooltip').each( function() {
+                var activation = $(this).hasClass('hover') ? 'hover' : 'click';
+                $(this).cluetip({
+                    activation: activation,
+                    width:175,
+                    cluetipClass:'jtip',
+                    local:true,
+                    arrows:true,
+                    closeText: '<img src="<c:url value="/img/jquery_cluetip/close-gray.png"/>"/>'
+                });
+            });
+        };
 
         $.recordsPerPage = 5;
         $.pageNumber = 0;
@@ -111,7 +122,7 @@
         $.updatePager = function () {
             $.numberOfRecords =  $('#appTable').find('tr').length - 1; // - 1 because there is one blank extra row
             $.numberOfPages = Math.ceil($.numberOfRecords / $.recordsPerPage);
-            if (($.pageNumber + 1) > $.numberOfPages) {
+            if (($.pageNumber + 1) > $.numberOfPages && $.numberOfPages > 0) {
                 $.pageNumber = $.numberOfPages - 1;
             }
             var str = '<ul>';
@@ -205,6 +216,7 @@
 
         $.updatePager();
         $.updateTable();
+        $.clueTips();
 
         $('#modalContainer').dialog({autoOpen:false});
 
@@ -266,6 +278,7 @@
                     $('#applicantsSection').html(html);
                     $.updatePager();
                     $.updateTable();
+                    $.clueTips();
                     $('#modalContainer').dialog('close');
                 }
             });
@@ -291,6 +304,7 @@
                     $('#applicantsSection').html(html);
                     $.updatePager();
                     $.updateTable();
+                    $.clueTips();
                     $('#modalContainer').dialog('close');
                 }
             });
