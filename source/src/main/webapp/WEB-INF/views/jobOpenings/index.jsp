@@ -54,8 +54,9 @@
             </h1>
         </div>
     </security:authorize>
-    <display:table name="jobOpenings" id="jobOpening" export="true" pagesize="10" htmlId="job_opening_list"
-                   class="sortable" requestURI="${requestScope['javax.servlet.forward.request_uri']}" sort="list">
+    <display:table name="jobOpenings" id="jobOpening" export="true" htmlId="job_opening_list"
+                   class="sortable" requestURI="${requestScope['javax.servlet.forward.request_uri']}" sort="list"
+                   defaultsort="4" defaultorder="descending">
         <display:column title="Job Position" headerClass="header" sortable="true" sortProperty="jobPosition.title">
             <a href="view?jo=${jobOpening.id}">${jobOpening.jobPosition.title}</a>
         </display:column>
