@@ -83,6 +83,11 @@
         <div id="candidatesList"></div>
         <input type="button" value="Add selected" id="addCandidates"/>
     </div>
+    <c:forEach items="${candidateNotes}" var="candidateNote">
+    <div id="noteDiv_${candidateNote.candidate.id}">
+        <textarea id="noteText_${candidateNote.candidate.id}">${candidateNote.note.body}</textarea>
+    </div>
+    </c:forEach>
 </div>
 
 <script type="text/javascript">
@@ -172,7 +177,25 @@
             });
         };
 
+        $.notesDivs = [];
+
+        $('div[id^=noteDiv_]').each(function() {
+            var id = $(this).attr('id').substr(8);
+            $.notesDivs[id] = $(this);
+            $(this).dialog({autoOpen:false});
+        });
+
         $.updateTable = function() {
+            $('a[id^=note_]').click(function() {
+                var id = $(this).attr('id').substr(5);
+                var noteDiv = $.notesDivs[id]
+                if (noteDiv == null) {
+                    $.notesDivs[id] = $('<div id=\'noteDiv_\'' + id + '></div>')
+                            .html('<textarea id="noteText_' + id + '"/>');
+                    $.notesDivs[id].dialog({autoOpen:false});
+                }
+                $.notesDivs[id].dialog('open');
+            });
             $('#appTable').find('tr').each(function (i) {
                 if (i > 0) {
                     if ((i - 1) >= ($.pageNumber * $.recordsPerPage) && (i - 1) < (($.pageNumber + 1) * $.recordsPerPage) )
@@ -225,8 +248,17 @@
             var ats = new Array();
             $(':hidden[id^="_applicants"]').each(function() {
                 data.push({
-                    name:'applicants',
+                    name:'a',
                     value:$(this)[0].value
+                });
+                var note = '';
+                var noteTextareaSelector = $('#noteText_' + $(this)[0].value);
+                if (noteTextareaSelector.length > 0) {
+                    note = noteTextareaSelector[0].value;
+                }
+                data.push({
+                    name:'n',
+                    value:note
                 });
             });
             data.push({
