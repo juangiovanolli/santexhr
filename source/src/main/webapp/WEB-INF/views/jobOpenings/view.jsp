@@ -15,6 +15,25 @@
         overflow-y: auto !important;
         height: auto !important;
     }
+    .note {
+        width: 285px;
+        margin: 5px;
+        height: 140px;
+        resize: none;
+    }
+    .candidateSelectionCell {
+        height: auto;
+        padding: inherit;
+    }
+    #candidatesSelectionTableDiv {
+        height: 145px;
+        overflow: auto;
+    }
+    #addCandidates {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
 </style>
 <style type="text/css">
     @import "<c:url value='/css/layout/candidate_list.css'/>";
@@ -85,7 +104,8 @@
     </div>
     <c:forEach items="${candidateNotes}" var="candidateNote">
     <div id="noteDiv_${candidateNote.candidate.id}">
-        <textarea id="noteText_${candidateNote.candidate.id}">${candidateNote.note.body}</textarea>
+        <label for="noteText_${candidateNote.candidate.id}">Note:</label><br/>
+        <textarea id="noteText_${candidateNote.candidate.id}" class="note">${candidateNote.note.body}</textarea>
     </div>
     </c:forEach>
 </div>
@@ -182,7 +202,7 @@
         $('div[id^=noteDiv_]').each(function() {
             var id = $(this).attr('id').substr(8);
             $.notesDivs[id] = $(this);
-            $(this).dialog({autoOpen:false});
+            $(this).dialog({autoOpen:false, modal: true});
         });
 
         $.updateTable = function() {
@@ -191,8 +211,8 @@
                 var noteDiv = $.notesDivs[id]
                 if (noteDiv == null) {
                     $.notesDivs[id] = $('<div id=\'noteDiv_\'' + id + '></div>')
-                            .html('<textarea id="noteText_' + id + '"/>');
-                    $.notesDivs[id].dialog({autoOpen:false});
+                            .html('<label for="noteText_"' + id + '>Note:</label><br/><textarea id="noteText_' + id + '" class="note"/>');
+                    $.notesDivs[id].dialog({autoOpen:false, modal: true});
                 }
                 $.notesDivs[id].dialog('open');
             });
@@ -241,7 +261,7 @@
         $.updateTable();
         $.clueTips();
 
-        $('#modalContainer').dialog({autoOpen:false});
+        $('#modalContainer').dialog({autoOpen:false, modal: true, width: 500});
 
         $('#submit').click(function() {
             var data = $('#formId').serializeArray();

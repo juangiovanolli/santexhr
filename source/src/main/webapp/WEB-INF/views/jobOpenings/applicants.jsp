@@ -167,7 +167,7 @@
     </security:authorize>
     <display:column media="html" headerClass="icon header" class="icon" title="<img src=\"${pageContext.request.contextPath}/img/table/notes.png\" title=\"Notes\"/>">
         <a id="note_${candidate.id}">
-            <img src="<c:url value='/img/table/notes.png'/>" title="${tt:abbreviateTo(candidate.name.first,15)}'s Notes"/>
+            <img src="<c:url value='/img/table/notes.png'/>" title="${tt:abbreviateTo(candidate.name.first,15)}'s Job Opening Note"/>
         </a>
     </display:column>
 </display:table>
