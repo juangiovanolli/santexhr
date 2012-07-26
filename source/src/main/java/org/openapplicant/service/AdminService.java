@@ -1334,7 +1334,9 @@ public class AdminService extends ApplicationService {
         jobOpening.setFinishDate(finishDate);
         jobOpening.setClient(client);
         jobOpening.setDescription(description);
-        jobOpening.setApplicantNotes(applicantNotes);
+        final List<ApplicantNote> oldApplicantNotes = jobOpening.getApplicantNotes();
+        oldApplicantNotes.clear();
+        oldApplicantNotes.addAll(applicantNotes);
         getJobOpeningDao().save(jobOpening);
     }
 

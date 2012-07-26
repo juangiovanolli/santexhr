@@ -112,14 +112,7 @@ public class JobOpening extends DomainObject {
     }
 
     public void setApplicantNotes(List<ApplicantNote> applicantNotes) {
-        if (this.applicantNotes == null) {
-            this.applicantNotes = applicantNotes;
-        } else {
-            this.applicantNotes.clear();
-            if (applicantNotes != null) {
-                this.applicantNotes.addAll(applicantNotes);
-            }
-        }
+        this.applicantNotes = applicantNotes;
     }
 
     @Transient
