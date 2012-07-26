@@ -106,6 +106,7 @@ public class JobOpening extends DomainObject {
 
     @OneToMany
     @Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
+    @JoinColumn(name = "jobOpening")
     public List<ApplicantNote> getApplicantNotes() {
         return applicantNotes;
     }
