@@ -24,12 +24,13 @@
     .candidateSelectionCell {
         height: auto;
         padding: inherit;
+        width: 25%;
     }
     #candidatesSelectionTableDiv {
         height: 145px;
         overflow: auto;
     }
-    #addCandidates {
+    .okDialogButton {
         position: absolute;
         right: 0;
         bottom: 0;
@@ -83,6 +84,29 @@
                     <a id="deleteApplicants" title="Delete selected applicants">
                         <img src="<c:url value="/img/delete.png" />" style="width: 16px; height: 16px" alt="Delete" />
                     </a>
+                </div>
+            </li>
+            <li>
+                <label for="selectedApplicant">Selected:</label>
+                <div>
+                    <c:choose>
+                        <c:when test="${!(jobOpening.selectedApplicant eq null)}">
+                            <c:choose>
+                                <c:when test="${!empty jobOpening.selectedApplicant.name.first}">
+                                    <span id="selectedApplicant"><c:out value="${tt:abbreviateTo(jobOpening.selectedApplicant.name.first,14)}"/> <strong><c:out value="${tt:abbreviateTo(jobOpening.selectedApplicant.name.last,14)}"/></strong></span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span id="selectedApplicant"><i>Information Required</i> <img src="<c:url value='/img/candidate_icons/warning.png'/>"/></span>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:when>
+                        <c:otherwise>
+                            <span id="selectedApplicant">
+                                No applicant selected
+                            </span>
+                        </c:otherwise>
+                    </c:choose>
+                    <input id="openSelectApplicant" type="submit" class="submit" value="Select..."/>
                 </div>
             </li>
             <li class="actions">
@@ -143,6 +167,14 @@
 
         $.recordsPerPage = 5;
         $.pageNumber = 0;
+        <c:choose>
+        <c:when test="${!(jobOpening.selectedApplicant eq null)}">
+        $.selectedApplicant = ${jobOpening.selectedApplicant.id};
+        </c:when>
+        <c:otherwise>
+        $.selectedApplicant = '';
+        </c:otherwise>
+        </c:choose>
 
         $.updatePager = function () {
             $.numberOfRecords =  $('#appTable').find('tr').length - 1; // - 1 because there is one blank extra row
@@ -360,6 +392,32 @@
                     $('#modalContainer').dialog('close');
                 }
             });
+            return false;
+        });
+
+        $('#openSelectApplicant').click(function() {
+            var a = new Array();
+            $(':hidden[id^="_applicants"]').each(function() {
+                a.push($(this)[0].value);
+            });
+            $.ajax({
+                type:'POST',
+                url: '<c:url value="listApplicantsForJobOpeningSelection"/>',
+                data:{
+                    'a':a,
+                    'sa':$.selectedApplicant
+                },
+                success:function(html) {
+                    $.applicantSelectionDialog = $('<div></div>').html(html);
+                    $.applicantSelectionDialog.dialog({modal: true, width: 500});
+                }
+            });
+            return false;
+        });
+
+        $('#selectApplicant').click(function() {
+            $.selectedApplicant = $('input:radio[id^="applicants"]:checked')[0].value;
+            $.applicantSelectionDialog.dialog('close');
             return false;
         });
     }

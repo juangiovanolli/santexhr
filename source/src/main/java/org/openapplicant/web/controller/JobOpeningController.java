@@ -83,6 +83,25 @@ public class JobOpeningController extends AdminController {
         return "jobOpenings/index";
     }
 
+    @RequestMapping(method=GET)
+    public String updateStatus(
+            @RequestParam("id") JobOpening jobOpening,
+            @RequestParam("status") String status,
+            @RequestParam(value="view_status", required=false) String viewStatus,
+            @RequestParam(value="view_archivedStatus", required=false) String archivedViewStatus) {
+
+        JobOpening.Status newStatus = JobOpening.Status.valueOf(status);
+        getAdminService().updateJobOpeningStatus(jobOpening.getId(), newStatus);
+
+        if (StringUtils.hasText(viewStatus)) {
+            return "redirect:viewstatus?status="+viewStatus;
+        } else if (StringUtils.hasText(archivedViewStatus)) {
+            return "redirect:viewstatus?archivedStatus="+archivedViewStatus;
+        } else {
+            return "redirect:all";
+        }
+    }
+
     @RequestMapping(method = GET)
     public String view(@RequestParam(value = "jo") Long jobOpeningId,
                        Map<String, Object> model) {
@@ -198,6 +217,16 @@ public class JobOpeningController extends AdminController {
         return "jobOpenings/applicants";
     }
 
+    @RequestMapping(method = POST)
+    public String listApplicantsForJobOpeningSelection(
+            @RequestParam(value = "a", required = false) List<Candidate> applicants,
+            @RequestParam(value = "sa", required = false) Candidate selectedApplicant,
+            Map<String, Object> model) {
+        model.put("applicants", applicants);
+        model.put("selectedApplicant", selectedApplicant);
+        return "jobOpenings/selectApplicant";
+    }
+
     protected List<Candidate> createCandidateListFrom(List<ApplicantNote> applicantNotes) {
         ArrayList<Candidate> candidates = new ArrayList<Candidate>();
         for (ApplicantNote applicantNote : applicantNotes) {
@@ -222,6 +251,22 @@ public class JobOpeningController extends AdminController {
             public void setAsText(String text) throws IllegalArgumentException {
                 if (StringUtils.hasText(text)) {
                     setValue(getAdminService().findJobPositionById(Long.parseLong(text)));
+                }
+            }
+        });
+        binder.registerCustomEditor(JobOpening.class, new PropertyEditorSupport() {
+            @Override
+            public String getAsText() {
+                if (this.getValue() != null && this.getValue() instanceof JobPosition) {
+                    return ((JobOpening)getValue()).getId().toString();
+                }
+                return super.getAsText();
+            }
+
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if (StringUtils.hasText(text)) {
+                    setValue(getAdminService().findJobOpeningById(Long.parseLong(text)));
                 }
             }
         });

@@ -1341,6 +1341,24 @@ public class AdminService extends ApplicationService {
     }
 
     /**
+     * Updates a job opening status
+     * @param id
+     * @param status
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void updateJobOpeningStatus(Long id, JobOpening.Status status) {
+        JobOpening jobOpening = getJobOpeningDao().find(id);
+        JobOpening.Status oldStatus = jobOpening.getStatus();
+        if (JobOpening.Status.getActiveStatus().contains(oldStatus) && status.equals(JobOpening.Status.ARCHIVED)) {
+            jobOpening.setLastActiveStatus(oldStatus);
+        } else if (JobOpening.Status.getActiveStatus().contains(status)) {
+            jobOpening.setLastActiveStatus(null);
+        }
+        jobOpening.setStatus(status);
+        getJobOpeningDao().save(jobOpening);
+    }
+
+    /**
      * Saves a job opening
      * @param jobOpening
      */

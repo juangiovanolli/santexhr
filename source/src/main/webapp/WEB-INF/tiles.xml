@@ -306,6 +306,7 @@
     </definition>
     <definition name="jobOpenings/applicants" template="/WEB-INF/views/jobOpenings/applicants.jsp"/>
     <definition name="jobOpenings/candidates" template="/WEB-INF/views/jobOpenings/selectCandidates.jsp"/>
+    <definition name="jobOpenings/selectApplicant" template="/WEB-INF/views/jobOpenings/selectApplicant.jsp"/>
 	
 	<!-- CreateAccount -->
 	<definition name="createAccount/index" extends="publicApplication">

@@ -6,45 +6,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
 <%@ page import="static org.openapplicant.domain.User.Role.ROLE_HR" %>
 
-<style type="text/css">
-    th.name {
-        width: 22.5%;
-    }
-
-    th.genre {
-        width: 15%;
-    }
-
-    th.desc {
-        width: 35%;
-    }
-
-    th.state {
-        width: 5%;
-    }
-
-    th.perc_complete {
-        width: 12.5%;
-    }
-
-    th.col_action {
-        width: 10%;
-    }
-
-    td.perc_complete {
-        text-align: right;
-    }
-
-    td.exam_completed {
-        background-color: #90EE90 !important;
-    }
-
-    .action {
-        display:inline;
-        margin-right:10px;
-    }
-</style>
-
 <div id="content">
     <security:authorize ifNotGranted="<%=ROLE_HR.name()%>">
         <div>
@@ -71,9 +32,62 @@
         </display:column>
         <c:if test="${!(jobOpeningsSidebar eq null && viewActive eq null && viewArchived eq null)}">
             <display:column title="State" headerClass="header" sortable="true" sortProperty="status">
-                ${tt:humanize(jobOpening.status)}
+                <c:choose>
+                    <c:when test="${jobOpening.status eq 'ARCHIVED'}">
+                        ${tt:humanize(jobOpening.archivedStatusLabel)}
+                    </c:when>
+                    <c:otherwise>
+                        ${tt:humanize(jobOpening.status)}
+                    </c:otherwise>
+                </c:choose>
             </display:column>
         </c:if>
+        <display:column media="html" headerClass="icon header" class="icon" title="<img src=\"${pageContext.request.contextPath}/img/table/archive.gif\" title=\"Change Status\"/>">
+            <a class="tooltip" rel="#tooltip_${jobOpening.id }" title="Move to">
+                <img src="<c:url value='/img/table/archive.gif'/>"/>
+            </a>
+            <div style="display:none" id="tooltip_${jobOpening.id}">
+                <ul>
+                    <c:if test="${jobOpening.status eq 'ARCHIVED'}">
+                        <li>
+                            <a href="<c:url value="updateStatus?id=${jobOpening.id}&status=${jobOpening.lastActiveStatus}&view_archivedStatus=${view_archivedStatus}"/>">
+                                <c:out value="${tt:humanize(jobOpening.lastActiveStatus)}"/>
+                            </a>
+                        </li>
+                    </c:if>
+                    <c:if test="${jobOpening.status != 'ARCHIVED'}">
+                        <c:forEach items="${activeStatuses}" var="status">
+                            <c:if test="${status != jobOpening.status}">
+                                <li>
+                                    <a href="<c:url value="updateStatus?id=${jobOpening.id}&status=${status}&view_status=${view_status}"/>">
+                                        <c:out value="${tt:humanize(status)}"/>
+                                    </a>
+                                </li>
+                            </c:if>
+                        </c:forEach>
+                        <li>
+                            <a href="<c:url value="updateStatus?id=${jobOpening.id}&status=${'ARCHIVED'}&view_status=${view_status}"/>">
+                                <c:out value="${tt:humanize('ARCHIVED')}"/>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+            </div>
+        </display:column>
     </display:table>
 </div>
+<script type="text/javascript">
+    oltk.include('jquery/cluetip/jquery.cluetip.js');
+
+    $('.tooltip').each( function() {
+        var activation = $(this).hasClass('hover') ? 'hover' : 'click';
+        $(this).cluetip({
+            activation: activation,
+            width:175,
+            cluetipClass:'jtip',
+            local:true,
+            arrows:true,
+            closeText: '<img src="<c:url value="/img/jquery_cluetip/close-gray.png"/>"/>'
+        });
+    });
 </script>
