@@ -124,6 +124,7 @@ public class JobOpeningController extends AdminController {
     public String update(@ModelAttribute JobOpening jobOpening,
                          @RequestParam(value = "a", required = false) List<Candidate> candidates,
                          @RequestParam(value = "n", required = false) List<Note> notes,
+                         @RequestParam(value = "sa", required = false) Candidate selectedApplicant,
                          @RequestParam(value = "submit", required = false) String submit,
                          Map<String, Object> model) {
         if ((candidates != null && notes == null) ||(candidates == null && notes != null) ||
@@ -131,7 +132,7 @@ public class JobOpeningController extends AdminController {
             throw new IllegalStateException();
         if (submit != null) {
             model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
-                Errors errors = jobOpening.validate();
+            Errors errors = jobOpening.validate();
             if (errors.hasErrors()) {
                 model.put("jobOpening", jobOpening);
                 model.put("applicants", jobOpening.getApplicantNotes());
@@ -147,6 +148,7 @@ public class JobOpeningController extends AdminController {
                 }
             }
             jobOpening.setApplicantNotes(applicantNotes);
+            jobOpening.setSelectedApplicant(selectedApplicant);
             if (jobOpening.getId() != null && jobOpening.getId() > 0) {
                 getAdminService().updateJobOpeningInfo(
                         jobOpening.getId(),
@@ -154,16 +156,17 @@ public class JobOpeningController extends AdminController {
                         jobOpening.getFinishDate(),
                         jobOpening.getClient(),
                         jobOpening.getDescription(),
-                        jobOpening.getApplicantNotes()
+                        jobOpening.getApplicantNotes(),
+                        jobOpening.getSelectedApplicant()
                 );
             } else {
                 jobOpening.setCompany(currentUser().getCompany());
                 getAdminService().saveJobOpening(jobOpening);
             }
+            model.put("success", Boolean.TRUE);
             model.put("candidateNotes", jobOpening.getApplicantNotes());
             model.put("candidates", createCandidateListFrom(jobOpening.getApplicantNotes()));
             model.put("jobOpening", jobOpening);
-            model.put("success", Boolean.TRUE);
             return "jobOpenings/view";
         }
         return "redirect:all";

@@ -35,6 +35,18 @@
         right: 0;
         bottom: 0;
     }
+    #openSelectApplicant {
+        margin-left: 5px;
+        width: auto;
+    }
+    #selectedApplicant {
+        font-size: small;
+        margin-top: 3px;
+    }
+    #description {
+        resize: none;
+        height: 100px;
+    }
 </style>
 <style type="text/css">
     @import "<c:url value='/css/layout/candidate_list.css'/>";
@@ -89,23 +101,16 @@
             <li>
                 <label for="selectedApplicant">Selected:</label>
                 <div>
-                    <c:choose>
-                        <c:when test="${!(jobOpening.selectedApplicant eq null)}">
-                            <c:choose>
-                                <c:when test="${!empty jobOpening.selectedApplicant.name.first}">
-                                    <span id="selectedApplicant"><c:out value="${tt:abbreviateTo(jobOpening.selectedApplicant.name.first,14)}"/> <strong><c:out value="${tt:abbreviateTo(jobOpening.selectedApplicant.name.last,14)}"/></strong></span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span id="selectedApplicant"><i>Information Required</i> <img src="<c:url value='/img/candidate_icons/warning.png'/>"/></span>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:when>
-                        <c:otherwise>
-                            <span id="selectedApplicant">
-                                No applicant selected
-                            </span>
-                        </c:otherwise>
-                    </c:choose>
+                    <span id="selectedApplicant">
+                        <c:choose>
+                            <c:when test="${!(jobOpening.selectedApplicant eq null)}">
+                                ${jobOpening.selectedApplicant.name}
+                            </c:when>
+                            <c:otherwise>
+                                No Selection
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
                     <input id="openSelectApplicant" type="submit" class="submit" value="Select..."/>
                 </div>
             </li>
@@ -124,7 +129,7 @@
 <div class="noneDisplay">
     <div id="modalContainer">
         <div id="candidatesList"></div>
-        <input type="button" value="Add selected" id="addCandidates"/>
+        <input type="button" value="Add selected" id="addCandidates" class="okDialogButton"/>
     </div>
     <c:forEach items="${candidateNotes}" var="candidateNote">
     <div id="noteDiv_${candidateNote.candidate.id}">
@@ -140,9 +145,18 @@
     oltk.include('jquery/cluetip/jquery.cluetip.js');
     oltk.include('jquery/ui/ui.datepicker.js');
     <c:choose><c:when test="${!(fn:substring(pageContext.response.locale,0,2) eq 'en')}">oltk.include('jquery/ui/i18n/ui.datepicker-${fn:substring(pageContext.response.locale,0,2)}.js');
-    $('#finishDate').datepicker($.datepicker.regional['${fn:substring(pageContext.response.locale,0,2)}']);</c:when><c:otherwise>$('#finishDate').datepicker();</c:otherwise></c:choose>
+
+    <c:choose>
+    <c:when test="${!(jobOpening.selectedApplicant eq null)}">
+    $.selectedApplicant = ${jobOpening.selectedApplicant.id};
+    </c:when>
+    <c:otherwise>
+    $.selectedApplicant = '';
+    </c:otherwise>
+    </c:choose>
 
     var onLoad = function() {
+        $('#finishDate').datepicker($.datepicker.regional['${fn:substring(pageContext.response.locale,0,2)}']);</c:when><c:otherwise>$('#finishDate').datepicker();</c:otherwise></c:choose>
         $.clueTips = function() {
             $('.candidate_name').cluetip({
                 width:425,
@@ -167,14 +181,6 @@
 
         $.recordsPerPage = 5;
         $.pageNumber = 0;
-        <c:choose>
-        <c:when test="${!(jobOpening.selectedApplicant eq null)}">
-        $.selectedApplicant = ${jobOpening.selectedApplicant.id};
-        </c:when>
-        <c:otherwise>
-        $.selectedApplicant = '';
-        </c:otherwise>
-        </c:choose>
 
         $.updatePager = function () {
             $.numberOfRecords =  $('#appTable').find('tr').length - 1; // - 1 because there is one blank extra row
@@ -316,10 +322,15 @@
             data.push({
                 name:'submit',
                 value:'submit'
-            })
+            });
+            if ($.selectedApplicant != '') {
+                data.push({
+                    name:'sa',
+                    value:$.selectedApplicant
+                });
+            }
             $.post('<c:url value="update"/>',$.param(data), function (data, textStatus, jqXHR) {
-                document.documentElement.innerHTML = data;
-                onLoad();
+                window.location.reload();
             });
             return false;
         });
@@ -375,7 +386,7 @@
                 aap.push($(this)[0].value);
             });
             var atd = new Array();
-            $(':checked[id^="applicants"]').each(function() {
+            $('input:checkbox[id^="applicants"]:checked').each(function() {
                 atd.push($(this)[0].value);
             });
             $.ajax({
@@ -389,6 +400,12 @@
                     $.updatePager();
                     $.updateTable();
                     $.clueTips();
+                    if ($.selectedApplicant != '') {
+                        if (atd.indexOf($.selectedApplicant + '') >= 0) {
+                            $.selectedApplicant = '';
+                            $('span#selectedApplicant').html('No Selection');
+                        }
+                    }
                     $('#modalContainer').dialog('close');
                 }
             });
@@ -410,14 +427,15 @@
                 success:function(html) {
                     $.applicantSelectionDialog = $('<div></div>').html(html);
                     $.applicantSelectionDialog.dialog({modal: true, width: 500});
+                    $.applicantSelectionDialog.find('#selectApplicant').click(function() {
+                        var radioChecked = $('input:radio[id^="applicantSelect"]:checked');
+                        $.selectedApplicant = radioChecked[0].value;
+                        $.applicantSelectionDialog.dialog('close');
+                        $('span#selectedApplicant').html(radioChecked.next().html());
+                        return false;
+                    });
                 }
             });
-            return false;
-        });
-
-        $('#selectApplicant').click(function() {
-            $.selectedApplicant = $('input:radio[id^="applicants"]:checked')[0].value;
-            $.applicantSelectionDialog.dialog('close');
             return false;
         });
     }

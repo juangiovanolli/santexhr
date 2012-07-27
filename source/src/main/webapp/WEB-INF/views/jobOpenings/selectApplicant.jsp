@@ -4,11 +4,11 @@
 <table>
     <tbody>
         <tr>
-            <td class="candidateSelectionCell"><input id="applicants0" type="radio" name="applicantsRadios"
-                                                      value="" <c:if test="${selectedApplicant eq null}"> checked="checked"</c:if>/> No Selection</td>
+            <td class="candidateSelectionCell"><input id="applicantSelect0" type="radio" name="applicantsRadios"
+                                                      value="" <c:if test="${selectedApplicant eq null}"> checked="checked"</c:if>/><span>No Selection</span></td>
         <c:forEach items="${applicants}" var="applicant" varStatus="row">
-            <td class="candidateSelectionCell"><input id="applicants${row.count}" type="radio" name="applicantsRadios"
-                value="${applicant.id}" <c:if test="${applicant eq selectedApplicant}"> checked="checked"</c:if>/> ${applicant.name}</td>
+            <td class="candidateSelectionCell"><input id="applicantSelect${row.count}" type="radio" name="applicantsRadios"
+                value="${applicant.id}" <c:if test="${applicant eq selectedApplicant}"> checked="checked"</c:if>/><span>${applicant.name}</span></td>
         <c:if test="${row.last && ((row.count + 1) mod 4) > 0}"><c:forEach var="i" begin="1" end="${4 - ((row.count + 1 )mod 4)}"><td/></c:forEach></c:if>
         <c:if test="${(row.count + 1) mod 4 == 0}"></tr><tr></c:if>
         </c:forEach>
