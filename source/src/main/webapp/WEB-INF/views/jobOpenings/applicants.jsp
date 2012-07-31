@@ -10,7 +10,7 @@
 <%@ page import="static org.openapplicant.domain.User.Role.ROLE_ADMIN" %>
 
 <display:table name="candidates" id="candidate" class="sortable" keepStatus="true" requestURI="${requestScope['javax.servlet.forward.request_uri']}" htmlId="appTable">
-    <display:column headerClass="header" media="html">
+    <display:column headerClass="header" media="html" style="width: 5%;">
         <input type="checkbox" id="applicants${row.count}" value="${candidate.id}">
     </display:column>
     <display:column headerClass="header" title="Name" media="html">
