@@ -54,7 +54,7 @@ var self = openapplicant.quiz.helper.timer = {
 		var seconds = Math.floor(time/1000);
 		var tenths = Math.floor(time/100)%10;
 		tenths = tenths==0?'0':tenths;
-		dom.html(seconds+'.'+tenths+'s');
+		dom.html(seconds + 's');
 		
 		if(time<30*1000)
 		  dom.addClass('urgent');

@@ -68,7 +68,7 @@ public class QuizController {
 		if(examLink.isUsed()) {
 			model.put("error", "This exam link has already been used.");
 			return "quiz/sorry";
-		}		
+		}
 		
 		putCandidate(model, examLink);
 		model.put("examLink", examLink);
@@ -118,9 +118,9 @@ public class QuizController {
 		
 		if(sitting.hasNextQuestion()) {
 			Question question = quizService.nextQuestion(sitting);
-			
+
 			timeProcess(sitting);
-			
+		
 			//Verify the remaining time
 			if(examMonitor != null && examMonitor.getSeconds() == 0){
 				redirect = QUIZ_THANKS_VIEW;
@@ -143,6 +143,67 @@ public class QuizController {
 			isExamTimed = true;
 		}
 		
+		return redirect;
+	}
+	
+	@RequestMapping(method=GET)
+	public String goToQuestion(	@RequestParam(value="s") String guid,@RequestParam(value="qId") Long qId,
+			Map<String,Object> model ) {
+			String redirect = "";
+			
+			Sitting sitting = quizService.findSittingByGuid(guid);
+			model.put("sitting", sitting);
+			if(sitting.hasNextQuestion()) {
+				Question question = quizService.goToQuestion(sitting, qId);
+				//Verify the remaining time
+				if(examMonitor != null && examMonitor.getSeconds() == 0){
+					redirect = QUIZ_THANKS_VIEW;
+				}else{	
+					model.put("question", question);
+					model.put("questionViewHelper", new MultipleChoiceHelper(question));
+					if(isExamTimed){
+						model.put("isExamInTime", "true");
+						model.put("remainingTime", examMonitor.getSeconds());
+					}
+					redirect =  new QuizQuestionViewVisitor(question).getView();
+				}
+			} else {				
+				redirect =  QUIZ_THANKS_VIEW;				
+			}
+			
+			if(QUIZ_THANKS_VIEW.equals(redirect)){
+				model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
+				totalExamTime = 0;
+				isExamTimed = true;
+			}
+			
+			return redirect;
+	}
+	
+	@RequestMapping(method=GET)
+	public String prevQuestion(	@RequestParam(value="s") String guid,
+							Map<String,Object> model ) {
+		String redirect = "";
+		Sitting sitting = quizService.findSittingByGuid(guid);
+		model.put("sitting", sitting);
+		
+		if(sitting.hasPreviousQuestion()) {
+			Question question = quizService.previousQuestion(sitting);
+			
+			//Verify the remaining time
+			if(examMonitor != null && examMonitor.getSeconds() == 0){
+				redirect = QUIZ_THANKS_VIEW;
+			}else{	
+			
+				model.put("question", question);
+				model.put("questionViewHelper", new MultipleChoiceHelper(question));
+				if(isExamTimed){
+					model.put("isExamInTime", "true");
+					model.put("remainingTime", examMonitor.getSeconds());
+				}
+				redirect =  new QuizQuestionViewVisitor(question).getView();
+			}
+		}
 		return redirect;
 	}
 	
@@ -182,8 +243,7 @@ public class QuizController {
 		//Counter time on the server side.
 		if(totalExamTime == 0 && isExamTimed){
 			calculateTotalExamTime(sitting.getExam());
-			if(isExamTimed){
-				
+			if(isExamTimed){				
 				examMonitor = new ExamTimeMonitor(totalExamTime);					
 			}
 		}		
