@@ -27,7 +27,6 @@ public class ExamDefinition extends DomainObject {
 	private String name = "";
 	private boolean active = false;
 	private Integer numberOfQuestionsWanted = 1;
-    private JobPosition jobPosition;
 	
 	@Transient
 	public boolean isComplete() {
@@ -173,15 +172,6 @@ public class ExamDefinition extends DomainObject {
 	public void setNumberOfQuestionsWanted(Integer numberOfQuestionsWanted) {
 		this.numberOfQuestionsWanted = numberOfQuestionsWanted;
 	}
-
-    @ManyToOne
-    public JobPosition getJobPosition() {
-        return jobPosition;
-    }
-
-    public void setJobPosition(JobPosition jobPosition) {
-        this.jobPosition = jobPosition;
-    }
 
     /**
 	 * Adds a categoryPercentage to this exam definition.

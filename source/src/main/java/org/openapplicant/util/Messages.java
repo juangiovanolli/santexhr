@@ -22,8 +22,4 @@ public abstract class Messages {
 	public static String getDefaultCompanyCompletionText() {
 		return messages.getString("company.completionText");
 	}
-
-    public static String getJobPositionDeleteDataIntegrityViolationExceptionText() {
-        return messages.getString("jobPosition.deleteDataIntegrityViolationExceptionText");
-    }
 }

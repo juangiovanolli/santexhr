@@ -7,7 +7,6 @@
 
 <div id="sidebar">
 
-    <tiles:insertAttribute name="jobOpenings"/>
     <tiles:insertAttribute name="candidateTree"/>
 	<tiles:insertAttribute name="profile"/>
 	<tiles:insertAttribute name="searches"/>

@@ -27,8 +27,6 @@ public class Exam extends DomainObject {
 	
 	private String artifactId = UUID.randomUUID().toString();
 
-    private JobPosition jobPosition;
-
 	/**
 	 * @return the artifactId of this exam.
 	 */
@@ -162,13 +160,4 @@ public class Exam extends DomainObject {
 		}
 		questions = value;
 	}
-
-    @ManyToOne
-    public JobPosition getJobPosition() {
-        return jobPosition;
-    }
-
-    public void setJobPosition(JobPosition jobPosition) {
-        this.jobPosition = jobPosition;
-    }
 }
