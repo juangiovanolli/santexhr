@@ -47,10 +47,7 @@ var self = openapplicant.quiz.helper.timer = {
 		var time = finish - new Date().getTime();
 		
 		if(time <= 0) {
-			self.destroy();
-			callback1.call();
-		    alert('Time is up.');
-		    callback2.call();
+			self.destroy();	
 			return;
 		}
 		

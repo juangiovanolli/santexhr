@@ -57,13 +57,16 @@
 						data: {remainingTime:totalTime},
 						success: function (data){
 							if(totalTime == 0){
-								submitResponse();
-								$(document).stopTime('keepalive');					
+								$(document).stopTime('keepalive');
+								submitResponse();								
+								nextQuestion();													
 							}
 						},
-						error: function (request, status, error){					
-							submitResponse();
+						error: function (request, status, error){
+							$("#examTime").html("The exam time has expired.");
 							$(document).stopTime('keepalive');
+							submitResponse();								
+							nextQuestion();													
 						}  
 					});
 				}, 0);

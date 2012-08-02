@@ -119,13 +119,7 @@ public class QuizController {
 		if(sitting.hasNextQuestion()) {
 			Question question = quizService.nextQuestion(sitting);
 			
-			//Counter time on the server side.
-			if(totalExamTime == 0 && isExamTimed){
-				this.calculateTotalExamTime(sitting.getExam());
-				if(isExamTimed){
-					examMonitor = new ExamTimeMonitor(totalExamTime);					
-				}
-			}
+			timeProcess(sitting);
 			
 			//Verify the remaining time
 			if(examMonitor != null && examMonitor.getSeconds() == 0){
@@ -183,6 +177,18 @@ public class QuizController {
 		}
 	}
 	
+	private void timeProcess(Sitting sitting){
+		
+		//Counter time on the server side.
+		if(totalExamTime == 0 && isExamTimed){
+			calculateTotalExamTime(sitting.getExam());
+			if(isExamTimed){
+				
+				examMonitor = new ExamTimeMonitor(totalExamTime);					
+			}
+		}		
+	}
+	
 	private void calculateTotalExamTime(Exam exam){		
 		List<Question> questionList= exam.getQuestions();
 
@@ -191,7 +197,12 @@ public class QuizController {
 				this.totalExamTime = this.totalExamTime + question.getTimeAllowed();
 			}
 		}
-		isExamTimed = this.totalExamTime > 0; 
+		
+		if(exam.getTotalTime() > this.totalExamTime){
+			this.totalExamTime = exam.getTotalTime();
+		}	
+		
+		isExamTimed = this.totalExamTime > 0;		
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
@@ -208,6 +219,8 @@ public class QuizController {
 			if( clientRemainingTime > serverRemainingTimeMin && clientRemainingTime <= serverRemainingTimeMax){
 				dataProgress.put("remainingTime", serverRemainingTime);
 			}else{
+				dataProgress.put("remainingTime", "");
+				logger.debug("The exam time has expired.");
 				throw new TimeoutException("The exam time has expired.");			
 			}
 		}
