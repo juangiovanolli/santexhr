@@ -27,7 +27,9 @@ public class Exam extends DomainObject {
 	
 	private String artifactId = UUID.randomUUID().toString();
 
-	/**
+    private long totalTime;
+    
+    /**
 	 * @return the artifactId of this exam.
 	 */
 	@Column(nullable=false, name="artifact_id")
@@ -160,4 +162,14 @@ public class Exam extends DomainObject {
 		}
 		questions = value;
 	}
+
+    @Column(nullable=true, columnDefinition="int default 0")
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(long totalTime) {
+        this.totalTime = totalTime;
+    }
+    
 }

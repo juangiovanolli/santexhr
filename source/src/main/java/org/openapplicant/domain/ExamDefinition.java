@@ -27,7 +27,8 @@ public class ExamDefinition extends DomainObject {
 	private String name = "";
 	private boolean active = false;
 	private Integer numberOfQuestionsWanted = 1;
-	
+    private long totalExamTime;
+    
 	@Transient
 	public boolean isComplete() {
 		Double acum = 0.0;
@@ -172,6 +173,15 @@ public class ExamDefinition extends DomainObject {
 	public void setNumberOfQuestionsWanted(Integer numberOfQuestionsWanted) {
 		this.numberOfQuestionsWanted = numberOfQuestionsWanted;
 	}
+
+    @Column(nullable=true, columnDefinition="int default 0")
+    public long getTotalExamTime() {
+        return totalExamTime;
+    }
+
+    public void setTotalExamTime(long totalExamTime) {
+        this.totalExamTime = totalExamTime;
+    }
 
     /**
 	 * Adds a categoryPercentage to this exam definition.
