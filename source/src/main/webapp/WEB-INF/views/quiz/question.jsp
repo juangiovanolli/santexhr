@@ -29,8 +29,9 @@
 	<tiles:insertAttribute name="questionKind"/>
    	<div class="pagination">
    		<ul>
-	   		<li class="prev ${sitting.nextQuestionIndex -2 >= 0?'':'disabled'}">
-				<a id="previousQuestion">Prev</a>	   		
+   			<c:set var="hasPreviousQuestion" value="${sitting.nextQuestionIndex -2 >= 0?'':'disabled'}"></c:set>
+	   		<li class="prev ${hasPreviousQuestion}">
+				<a id="${hasPreviousQuestion}previousQuestion" >Prev</a>	   		
 	   		</li>
 			<c:forEach items="${sitting.exam.questions}" var="questionIndex" varStatus="index">
 				<li class="${sitting.nextQuestionIndex == index.index + 1?'active':''}">

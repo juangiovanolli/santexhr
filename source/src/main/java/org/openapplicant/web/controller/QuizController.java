@@ -3,6 +3,7 @@ package org.openapplicant.web.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 
 @Controller
@@ -110,7 +112,7 @@ public class QuizController {
 	
 	@RequestMapping(method=GET)
 	public String question(	@RequestParam(value="s") String guid,
-							Map<String,Object> model, HttpServletRequest req ) {
+							Map<String,Object> model, HttpServletRequest req) {
 		logger.info("Question: building question");
 		Sitting sitting = quizService.findSittingByGuid(guid);
 		model.put("sitting", sitting);	
@@ -118,7 +120,6 @@ public class QuizController {
 		
 		if(sitting.hasNextQuestion()) {
 			Question question = quizService.nextQuestion(sitting);
-
 			timeProcess(sitting);
 		
 			//Verify the remaining time
@@ -153,29 +154,20 @@ public class QuizController {
 			
 			Sitting sitting = quizService.findSittingByGuid(guid);
 			model.put("sitting", sitting);
-			if(sitting.hasNextQuestion()) {
-				Question question = quizService.goToQuestion(sitting, qId);
-				//Verify the remaining time
-				if(examMonitor != null && examMonitor.getSeconds() == 0){
-					redirect = QUIZ_THANKS_VIEW;
-				}else{	
-					model.put("question", question);
-					model.put("questionViewHelper", new MultipleChoiceHelper(question));
-					if(isExamTimed){
-						model.put("isExamInTime", "true");
-						model.put("remainingTime", examMonitor.getSeconds());
-					}
-					redirect =  new QuizQuestionViewVisitor(question).getView();
+			Question question = quizService.goToQuestion(sitting, qId);
+			//Verify the remaining time
+			if(examMonitor != null && examMonitor.getSeconds() == 0){
+				redirect = QUIZ_THANKS_VIEW;
+			}else{	
+				model.put("question", question);
+				model.put("questionViewHelper", new MultipleChoiceHelper(question));
+				if(isExamTimed){
+					model.put("isExamInTime", "true");
+					model.put("remainingTime", examMonitor.getSeconds());
 				}
-			} else {				
-				redirect =  QUIZ_THANKS_VIEW;				
+				redirect =  new QuizQuestionViewVisitor(question).getView();
 			}
 			
-			if(QUIZ_THANKS_VIEW.equals(redirect)){
-				model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
-				totalExamTime = 0;
-				isExamTimed = true;
-			}
 			
 			return redirect;
 	}
@@ -236,10 +228,11 @@ public class QuizController {
 		public void visit(MultipleChoiceQuestion question) {
 			this.view = "quiz/multipleChoiceQuestion";
 		}
-	}
+	} 
+	
+	
 	
 	private void timeProcess(Sitting sitting){
-		
 		//Counter time on the server side.
 		if(totalExamTime == 0 && isExamTimed){
 			calculateTotalExamTime(sitting.getExam());
@@ -247,6 +240,16 @@ public class QuizController {
 				examMonitor = new ExamTimeMonitor(totalExamTime);					
 			}
 		}		
+	}
+	
+	private void questionTimeProcess(Question question) {
+		//Counter question time on the server side.		
+		if(totalExamTime == 0 && isExamTimed){	
+			question.getTimeAllowed();			
+			if(isExamTimed){					
+				examMonitor = new ExamTimeMonitor(totalExamTime);					
+			}
+		}			
 	}
 	
 	private void calculateTotalExamTime(Exam exam){		

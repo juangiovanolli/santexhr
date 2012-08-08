@@ -154,7 +154,7 @@ public class Sitting extends DomainObject {
 	public Question backToPreviousQuestion() {
 		Assert.state(hasPreviousQuestion(), "All questions have been viewed.");
 		Question result =  questionsAndResponses.get(nextQuestionIndex - 2).getQuestion();
-		nextQuestionIndex = nextQuestionIndex--;
+		nextQuestionIndex--;
 		return result;
 	}	
 	
@@ -176,7 +176,7 @@ public class Sitting extends DomainObject {
 		return null;
 	}
 	
-	// FIXME: we shouldn't be using this method to display the index of the 
+	// FIXME: we shouldn't be using th1is method to display the index of the 
 	// current question.  See QuestionController.js, question.ejs in 
 	// src/main/js/openapplicant/quiz
 	@Column(nullable=false) 
