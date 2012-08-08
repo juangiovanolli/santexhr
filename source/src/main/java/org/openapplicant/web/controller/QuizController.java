@@ -242,16 +242,6 @@ public class QuizController {
 		}		
 	}
 	
-	private void questionTimeProcess(Question question) {
-		//Counter question time on the server side.		
-		if(totalExamTime == 0 && isExamTimed){	
-			question.getTimeAllowed();			
-			if(isExamTimed){					
-				examMonitor = new ExamTimeMonitor(totalExamTime);					
-			}
-		}			
-	}
-	
 	private void calculateTotalExamTime(Exam exam){		
 		List<Question> questionList= exam.getQuestions();
 
