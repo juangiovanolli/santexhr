@@ -7,6 +7,7 @@
 <%@ page import="static org.openapplicant.domain.User.Role.ROLE_HR" %>
 <%@ page import="static org.openapplicant.domain.User.Role.ROLE_ADMIN" %>
 <%@ page import="static org.openapplicant.domain.User.Role.ROLE_HR_MANAGER" %>
+<%@ page import="static org.openapplicant.domain.User.Role.*" %>
 <style type="text/css">
 	 @import "<c:url value='/css/layout/candidate_list.css'/>";
 </style>
@@ -186,9 +187,9 @@
             </c:if>
         </display:column>
         </security:authorize>
-        <security:authorize ifAnyGranted="<%=ROLE_HR_MANAGER.name() + \",\" + ROLE_HR.name() %>">
+        <security:authorize ifAnyGranted="<%=ROLE_HR_MANAGER.name() + \",\" + ROLE_HR.name() + \",\" + ROLE_ADMIN.name() %>">
 	        <display:column media="html" headerClass="icon header" class="icon" title="<img src=\"${pageContext.request.contextPath}/img/table/packet.gif\" title=\"Sort by Printable Packet\"/>">
-	            <a href="<c:url value='/admin/report.pdf?candidate=${c.id}' />">
+	            <a href="<c:url value='/admin/report.pdf?candidate=${c.id}' />" target="_blank">
 	                <img src="<c:url value='/img/table/packet.gif'/>" title="${tt:abbreviateTo(c.name.first,15)}'s Packet"/>
 	            </a>
 	        </display:column>

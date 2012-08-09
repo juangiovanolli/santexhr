@@ -110,7 +110,7 @@ public class QuizController {
 	
 	@RequestMapping(method=GET)
 	public String question(	@RequestParam(value="s") String guid,
-							Map<String,Object> model, HttpServletRequest req ) {
+							Map<String,Object> model, HttpServletRequest req) {
 		logger.info("Question: building question");
 		Sitting sitting = quizService.findSittingByGuid(guid);
 		String sittingId = String.valueOf(sitting.getId());
@@ -130,13 +130,14 @@ public class QuizController {
 			}else{			
 				model.put("question", question);
 				model.put("questionViewHelper", new MultipleChoiceHelper(question));
+				
 				if(sittingTimeManager.isExamMonitoring(sittingId)){
 					model.put("isExamInTime", "true");
 					model.put("remainingTime", sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds());
 				}
 				redirect =  new QuizQuestionViewVisitor(question).getView();
 			}
-		} else {			
+		}else{			
 			redirect = QUIZ_THANKS_VIEW;
 		}
 		
@@ -155,6 +156,7 @@ public class QuizController {
 			
 			Sitting sitting = quizService.findSittingByGuid(guid);
 			model.put("sitting", sitting);
+
 			if(sitting.hasNextQuestion()) {
 				Question question = quizService.goToQuestion(sitting, qId);
 				
@@ -165,16 +167,15 @@ public class QuizController {
 				}else{	
 					model.put("question", question);
 					model.put("questionViewHelper", new MultipleChoiceHelper(question));
+					
 					if(sittingTimeManager.isExamMonitoring(sittingId)){
 						model.put("isExamInTime", "true");
 						model.put("remainingTime",sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds());
 					}
 					redirect =  new QuizQuestionViewVisitor(question).getView();
-				}
-			} else {				
-				redirect =  QUIZ_THANKS_VIEW;				
+				}				
 			}
-			
+
 			if(QUIZ_THANKS_VIEW.equals(redirect)){
 				model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
 				sittingTimeManager.clearExamTimeMonitorBySitting(sittingId);
@@ -240,10 +241,11 @@ public class QuizController {
 		public void visit(MultipleChoiceQuestion question) {
 			this.view = "quiz/multipleChoiceQuestion";
 		}
-	}
+	} 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String,Object>  progress(@RequestParam("remainingTime") long clientRemainingTime,@RequestParam("id") String sittingId) throws TimeoutException{
+	public Map<String,Object>  progress(@RequestParam("remainingTime") long clientRemainingTime,
+			@RequestParam("id") String sittingId) throws TimeoutException{
 		Map<String,Object> dataProgress = new HashMap<String,Object>();
 		
 		if(sittingTimeManager.isExamMonitoring(sittingId)){
@@ -264,6 +266,5 @@ public class QuizController {
 		}
 		
 		return dataProgress;
-	}
-	
+	}	
 }

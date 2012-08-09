@@ -31,6 +31,10 @@
 	width:80px;
 }
 
+#top #toolbar div.toolbar_item#candidates_button div a {
+    text-decoration: none;
+}
+
 #top #toolbar div.toolbar_item#email {
 	width:160px;
     position: relative;

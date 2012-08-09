@@ -83,6 +83,25 @@ public class JobOpeningController extends AdminController {
         return "jobOpenings/index";
     }
 
+    @RequestMapping(method=GET)
+    public String updateStatus(
+            @RequestParam("id") JobOpening jobOpening,
+            @RequestParam("status") String status,
+            @RequestParam(value="view_status", required=false) String viewStatus,
+            @RequestParam(value="view_archivedStatus", required=false) String archivedViewStatus) {
+
+        JobOpening.Status newStatus = JobOpening.Status.valueOf(status);
+        getAdminService().updateJobOpeningStatus(jobOpening.getId(), newStatus);
+
+        if (StringUtils.hasText(viewStatus)) {
+            return "redirect:viewstatus?status="+viewStatus;
+        } else if (StringUtils.hasText(archivedViewStatus)) {
+            return "redirect:viewstatus?archivedStatus="+archivedViewStatus;
+        } else {
+            return "redirect:all";
+        }
+    }
+
     @RequestMapping(method = GET)
     public String view(@RequestParam(value = "jo") Long jobOpeningId,
                        Map<String, Object> model) {
@@ -105,6 +124,7 @@ public class JobOpeningController extends AdminController {
     public String update(@ModelAttribute JobOpening jobOpening,
                          @RequestParam(value = "a", required = false) List<Candidate> candidates,
                          @RequestParam(value = "n", required = false) List<Note> notes,
+                         @RequestParam(value = "sa", required = false) Candidate selectedApplicant,
                          @RequestParam(value = "submit", required = false) String submit,
                          Map<String, Object> model) {
         if ((candidates != null && notes == null) ||(candidates == null && notes != null) ||
@@ -112,7 +132,7 @@ public class JobOpeningController extends AdminController {
             throw new IllegalStateException();
         if (submit != null) {
             model.put("jobPositions", getAdminService().findJobPositionsByCompany(currentUser().getCompany()));
-                Errors errors = jobOpening.validate();
+            Errors errors = jobOpening.validate();
             if (errors.hasErrors()) {
                 model.put("jobOpening", jobOpening);
                 model.put("applicants", jobOpening.getApplicantNotes());
@@ -128,6 +148,7 @@ public class JobOpeningController extends AdminController {
                 }
             }
             jobOpening.setApplicantNotes(applicantNotes);
+            jobOpening.setSelectedApplicant(selectedApplicant);
             if (jobOpening.getId() != null && jobOpening.getId() > 0) {
                 getAdminService().updateJobOpeningInfo(
                         jobOpening.getId(),
@@ -135,16 +156,17 @@ public class JobOpeningController extends AdminController {
                         jobOpening.getFinishDate(),
                         jobOpening.getClient(),
                         jobOpening.getDescription(),
-                        jobOpening.getApplicantNotes()
+                        jobOpening.getApplicantNotes(),
+                        jobOpening.getSelectedApplicant()
                 );
             } else {
                 jobOpening.setCompany(currentUser().getCompany());
                 getAdminService().saveJobOpening(jobOpening);
             }
+            model.put("success", Boolean.TRUE);
             model.put("candidateNotes", jobOpening.getApplicantNotes());
             model.put("candidates", createCandidateListFrom(jobOpening.getApplicantNotes()));
             model.put("jobOpening", jobOpening);
-            model.put("success", Boolean.TRUE);
             return "jobOpenings/view";
         }
         return "redirect:all";
@@ -198,6 +220,16 @@ public class JobOpeningController extends AdminController {
         return "jobOpenings/applicants";
     }
 
+    @RequestMapping(method = POST)
+    public String listApplicantsForJobOpeningSelection(
+            @RequestParam(value = "a", required = false) List<Candidate> applicants,
+            @RequestParam(value = "sa", required = false) Candidate selectedApplicant,
+            Map<String, Object> model) {
+        model.put("applicants", applicants);
+        model.put("selectedApplicant", selectedApplicant);
+        return "jobOpenings/selectApplicant";
+    }
+
     protected List<Candidate> createCandidateListFrom(List<ApplicantNote> applicantNotes) {
         ArrayList<Candidate> candidates = new ArrayList<Candidate>();
         for (ApplicantNote applicantNote : applicantNotes) {
@@ -222,6 +254,22 @@ public class JobOpeningController extends AdminController {
             public void setAsText(String text) throws IllegalArgumentException {
                 if (StringUtils.hasText(text)) {
                     setValue(getAdminService().findJobPositionById(Long.parseLong(text)));
+                }
+            }
+        });
+        binder.registerCustomEditor(JobOpening.class, new PropertyEditorSupport() {
+            @Override
+            public String getAsText() {
+                if (this.getValue() != null && this.getValue() instanceof JobPosition) {
+                    return ((JobOpening)getValue()).getId().toString();
+                }
+                return super.getAsText();
+            }
+
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if (StringUtils.hasText(text)) {
+                    setValue(getAdminService().findJobOpeningById(Long.parseLong(text)));
                 }
             }
         });

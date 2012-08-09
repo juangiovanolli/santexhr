@@ -25,6 +25,7 @@ public class JobOpening extends DomainObject {
     private String description;
     private List<ApplicantNote> applicantNotes;
     private Candidate selectedApplicant;
+    private Status lastActiveStatus;
 
     @Transient
     public Boolean isOpen() {
@@ -33,6 +34,7 @@ public class JobOpening extends DomainObject {
     }
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     public Status getStatus() {
         return status;
     }
@@ -115,6 +117,16 @@ public class JobOpening extends DomainObject {
         this.applicantNotes = applicantNotes;
     }
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    public Status getLastActiveStatus() {
+        return lastActiveStatus;
+    }
+
+    public void setLastActiveStatus(Status lastActiveStatus) {
+        this.lastActiveStatus = lastActiveStatus;
+    }
+
     @Transient
     public String getArchivedStatusLabel() {
         if (getStatus().equals(Status.ARCHIVED)) {
@@ -131,6 +143,11 @@ public class JobOpening extends DomainObject {
     @Transient
     public Boolean hasSelectedApplicant() {
         return getSelectedApplicant() != null;
+    }
+
+    @Transient
+    public Boolean isArchived() {
+        return this.status.equals(Status.ARCHIVED);
     }
 
     //========================================================================

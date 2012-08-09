@@ -145,14 +145,13 @@
 	
 	$(document).ready(function() {
 
-		if($("#openapplicant_users_list").find("tr").length < 2)
-			return;
+		//if($("#openapplicant_users_list").find("tr").length < 2)
+		//	return;
 		
 		$("#openapplicant_users_list").tablesorter({
 			sortList: [[0,0]],
 			widgets: ['zebra'], //alternating row styles
 			headers: {
-				0: {sorter:'lastName'},
 				4: {sorter: false },
 				5: {sorter: false },
 				6: {sorter: false }
