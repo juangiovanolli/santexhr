@@ -11,21 +11,81 @@
 	dwr.engine.setPostHook( function() { openapplicant.quiz.controller.LoadingController.hide(); } );
 </script>
 
-<style type="text/css">
-	 @import "<c:url value='/css/layout/quiz.css'/>";
-	 @import "<c:url value='/css/layout/pagination.css'/>";
-</style>
+<!-- section -->
+<section id="section">
+
+    <!-- article -->
+    <article>
+
+        <!-- wide -->
+        <div class="wide-top aling-center">
+
+            <!-- nav control -->
+            <div id="nav-control">
+
+                <!-- title -->
+                <h3>${examLink.exams[0].name}</h3>
+                <!-- title -->
+
+                <!-- nav -->
+                <ul id="nav-arrows">
+                    <li id="arrow-left"><a href="#"><span>Left</span></a></li>
+                    <ul id="nav-numbers">
+                        <li class="current-nav"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#" class="i-was-there">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li id="of-total">of</li>
+                        <li><a href="#">20</a></li>
+                    </ul>
+                    <li id="arrow-right"><a href="#"><span>Right</span></a></li>
+                </ul>
+                <!-- /nav -->
+
+            </div>
+            <!-- /nav control -->
+
+            <!-- ligths -->
+            <div id="ligths-wrap">
+
+                <p>Four yellow ligths to finish this question</p>
+
+                <ul>
+                    <li class="current-ligth"><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
+                    <li><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
+                    <li><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
+                    <li><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
+                </ul>
+
+            </div>
+            <!-- /ligths -->
+
+            <!-- questions  -->
+            <div id="questions">
+                <tiles:insertAttribute name="questionKind"/>
+            </div>
+            <!-- /questions  -->
+
+        </div>
+        <!-- /wide -->
+
+    </article>
+    <!-- /article -->
+
+</section>
+<!-- /section -->
 
 <form id="openapplicant_question_form" class="openapplicant_quiz_question">
 	
 	<input type="hidden" id="sittingId" value="${sitting.id}"/>
 	<input type="hidden" id="questionId" value="${question.id}"/>
 	<input type="hidden" id="remainingTime" value="${remainingTime}"/>
-	<div class="row">
+	<div class="row">	   
 	   <span id="name"><c:out value="${sitting.exam.name}"/>
 	   <c:out value="${sitting.nextQuestionIndex}"/> of <c:out value="${fn:length(sitting.exam.questions)}"/></span>   
 	   <span id="time_allowed"><c:out value="${question.timeAllowed}"/> s</span>
-	</div>
+	</div>	
 	<tiles:insertAttribute name="questionKind"/>
    	<div class="pagination">
    		<ul>
@@ -45,7 +105,6 @@
 	   		</li>   			
    		</ul>
    	</div>
-	<tiles:insertAttribute name="progressTime"/>
 	<div id="errorMessage"></div>
 </form>
 <script type="text/javascript">	
@@ -58,12 +117,23 @@
 				 //Display Total Exam time - CountDown.	
 				 $(document).everyTime('1s',function(i) {
 					 if(totalTime > 0){
-					 	totalTime = totalTime - 1;			  
-					 	$("#examTime").html("Exam Time: " + totalTime + " s");
+                        totalTime = totalTime - 1;
+                        var minutesRight, minutesLeft, secondsRight, secondsLeft;
+                        secondsRight = totalTime % 10;
+                        secondsLeft = parseInt(Math.floor((totalTime % 60) / 10));
+                        minutesRight = parseInt(Math.floor(totalTime / 60));
+                        minutesLeft = parseInt(Math.floor(totalTime / 600));
+                        $('#minute-left').html(minutesLeft);
+                        $('#minute-right').html(minutesRight);
+                        $('#second-left').html(secondsLeft);
+                        $('#second-right').html(secondsRight);
 					 }
 					 else
 					 {
-						 $("#examTime").html("Exam Time: " + totalTime + " s");
+                         $('#minute-left').html(0);
+                         $('#minute-right').html(0);
+                         $('#second-left').html(0);
+                         $('#second-right').html(0);
 						 $(document).stopTime('displayRemainingTime');
 					 }
 				 });	 
@@ -75,12 +145,12 @@
 						data: {remainingTime:totalTime,id:$('#sittingId').val()},
 						success: function (data){
 							if(totalTime == 0){
-								$(document).stopTime('keepalive');
+								$(document).stopTime('keepalive');					
 								submitResponse();								
 								nextQuestion();													
 							}
 						},
-						error: function (request, status, error){
+						error: function (request, status, error){					
 							$("#examTime").html("The exam time has expired.");
 							$(document).stopTime('keepalive');
 							submitResponse();								

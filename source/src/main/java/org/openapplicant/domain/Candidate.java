@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.validator.Email;
+import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 import org.openapplicant.util.Strings;
@@ -245,6 +246,7 @@ public class Candidate extends DomainObject {
 	 */
 	@Email
 	@UniqueWith("company.id")
+    @NotEmpty
 	public String getEmail() {
 		return email;
 	}

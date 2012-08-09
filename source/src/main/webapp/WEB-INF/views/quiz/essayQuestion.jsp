@@ -4,14 +4,29 @@
 
 <%@ page import="org.openapplicant.domain.question.EssayQuestion" %>
 
-<div class="row righty">
-	<pre id="prompt">${question.prompt}</pre>
-</div>
-<textarea id="response" name="content" class="essay"></textarea>
-<script type="text/javascript">
-	oltk.include('openapplicant/quiz/helper/recorder.js');
-	openapplicant.quiz.helper.recorder.init('#response');
 
-	oltk.include('openapplicant/quiz/helper/tab.js');
-	openapplicant.quiz.helper.tab.init('#response');
+
+                <h3 class="question-title">${question.prompt}</h3>
+
+                <textarea role="textbox" autocomplete="off" placeholder="Por favor complet&aacute; con la respuesta ac&aacute;." name="content" title="Por favor complet&aacute; con la respuesta ac&aacute;." id="response" class="textarea-large textarea-noCurrent" onFocus="this.className='textarea-large'" onBlur="this.className='textarea-large textarea-noCurrent'"></textarea>
+
+                <ul class="input-radio input-radio-single">
+                    <li>
+                        <label>
+                            <input type="radio" id="radio01" class="radio" name="radio01" value="">
+                            <strong>No se la respuesta</strong>
+                        </label>
+                    </li>
+                </ul>
+
+                <p class="next-button"><a href="test4.html" name="Continue">Continue</a></p>
+
+
+
+<script type="text/javascript">
+    oltk.include('openapplicant/quiz/helper/recorder.js');
+    openapplicant.quiz.helper.recorder.init('#response');
+
+    oltk.include('openapplicant/quiz/helper/tab.js');
+    openapplicant.quiz.helper.tab.init('#response');
 </script>

@@ -1,12 +1,32 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
-<%@ taglib uri="/WEB-INF/tlds/ttTagLibrary.tld" prefix="tt" %>
+<%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
+<!-- section -->
+<section id="section">
 
-<style type="text/css">
-	 @import "<c:url value='/css/layout/quiz.css'/>";
-</style>
+    <!-- slide 01 -->
+    <article id="slide-01">
 
-<div class="openapplicant_quiz_info">
-	<h2>Hello<c:if test="${tt:notBlank(candidate.name)}"> <c:out value="${candidate.name}"/></c:if>.</h2>
-	<pre><c:out value="${welcomeText}"/></pre>
-	<a id="next" href="<c:url value='/quiz/info'/>?exam=${examLink.guid}">start</a>
-</div>
+        <!-- left -->
+        <div class="left">
+            <img src="<c:url value='/img/quiz/clock.png'/>" alt="Clock" name="Clock" id="img-clock" class="img-tutorial-left img-resize">
+        </div>
+        <!-- left -->
+
+        <!-- right -->
+        <div class="right">
+            <p>The following exam will present you with a series of questions designed to measure your problem solving abilities.</p>
+
+            <p>Not all of the questions are timed, but that does not mean you can google around for the answers. Be sure to watch the YELLOW time ligths in the TOP.
+                When all ligths are in yellow your time for this question is off.</p>
+
+            <img src="<c:url value='/img/quiz/tutorial-img-01.png'/>" alt="Example" name="Example" id="img-example-01" class="img-resize">
+
+            <p class="next-button"><a href="index2?exam=${examLink.entityInfo.businessGuid}" name="Continue">Continue</a></p>
+        </div>
+        <!-- right -->
+
+    </article>
+    <!-- /slide 01 -->
+
+</section>
+<!-- /section -->

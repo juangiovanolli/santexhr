@@ -1,14 +1,5 @@
 package org.openapplicant.web.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,11 +7,7 @@ import org.openapplicant.domain.Candidate;
 import org.openapplicant.domain.Sitting;
 import org.openapplicant.domain.link.CandidateExamLink;
 import org.openapplicant.domain.link.ExamLink;
-import org.openapplicant.domain.question.CodeQuestion;
-import org.openapplicant.domain.question.EssayQuestion;
-import org.openapplicant.domain.question.IQuestionVisitor;
-import org.openapplicant.domain.question.MultipleChoiceQuestion;
-import org.openapplicant.domain.question.Question;
+import org.openapplicant.domain.question.*;
 import org.openapplicant.service.QuizService;
 import org.openapplicant.service.SittingTimeManager;
 import org.openapplicant.web.view.MultipleChoiceHelper;
@@ -30,13 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 
 @Controller
 public class QuizController {
 	private static final Log logger = LogFactory.getLog(QuizController.class);
 	
 	private QuizService quizService;
-
+	
 	private SittingTimeManager sittingTimeManager;
 	
 	private final static String QUIZ_THANKS_VIEW = "quiz/thanks";
@@ -44,39 +39,69 @@ public class QuizController {
 	public void setQuizService(QuizService value) {
 		quizService = value;
 	}
-			
-	public void setSittingTimeManager(SittingTimeManager sittingTimeManager) {
-		this.sittingTimeManager = sittingTimeManager;
-	}
 
-	@RequestMapping(method=GET)
-	public String index(	@RequestParam(value="exam", required=false) String guid,
-							Map<String,Object> model) {
+    public void setSittingTimeManager(SittingTimeManager sittingTimeManager) {
+        this.sittingTimeManager = sittingTimeManager;
+    }
 
-		if(null == guid || StringUtils.isBlank(guid)) {
-			model.put("error", "You need an exam link to take an exam.");
-			return "quiz/sorry";
-		}
-	
-		ExamLink examLink = quizService.getExamLinkByGuid(guid);
-	
-		if(null == examLink) {
-			model.put("error", "Your exam link is old or invalid.");
-			return "quiz/sorry";
-		}
-		
-		if(examLink.isUsed()) {
-			model.put("error", "This exam link has already been used.");
-			return "quiz/sorry";
-		}
-		
-		putCandidate(model, examLink);
-		model.put("examLink", examLink);
-		model.put("welcomeText", examLink.getCompany().getWelcomeText());
-		
-	    return "quiz/index";
-	}
-	
+    @RequestMapping(method=GET)
+    public String index(	@RequestParam(value="exam", required=false) String guid,
+                             Map<String,Object> model) {
+        if (doIndex(guid, model)) {
+            return "quiz/index";
+        } else {
+            return "quiz/sorry";
+        }
+    }
+
+    @RequestMapping(method=GET)
+    public String index2(	@RequestParam(value="exam", required=false) String guid,
+                             Map<String,Object> model) {
+        if (doIndex(guid, model)) {
+            return "quiz/index2";
+        } else {
+            return "quiz/sorry";
+        }
+    }
+
+    @RequestMapping(method=GET)
+    public String index3(	@RequestParam(value="exam", required=false) String guid,
+                             Map<String,Object> model) {
+        if (doIndex(guid, model)) {
+            return "quiz/index3";
+        } else {
+            return "quiz/sorry";
+        }
+    }
+
+    /**
+     *
+     * @return true if there were no errors, false if there were
+     */
+    private boolean doIndex(String guid, Map<String, Object> model) {
+        if(null == guid || StringUtils.isBlank(guid)) {
+            model.put("error", "You need an exam link to take an exam.");
+            return false;
+        }
+
+        ExamLink examLink = quizService.getExamLinkByGuid(guid);
+
+        if(null == examLink) {
+            model.put("error", "Your exam link is old or invalid.");
+            return false;
+        }
+
+        if(examLink.isUsed()) {
+            model.put("error", "This exam link has already been used.");
+            return false;
+        }
+
+        putCandidate(model, examLink);
+        model.put("examLink", examLink);
+        model.put("welcomeText", examLink.getCompany().getWelcomeText());
+        return true;
+    }
+
 	@RequestMapping(method=GET)
 	public String info(	@RequestParam(value="exam") String guid,
 						Map<String,Object> model) {
@@ -120,7 +145,7 @@ public class QuizController {
 		
 		if(sitting.hasNextQuestion()) {
 			Question question = quizService.nextQuestion(sitting);
-			
+		
 			sittingTimeManager.timerProcess(sittingId, sitting.getExam());
 			
 			//Verify the remaining time
@@ -137,7 +162,7 @@ public class QuizController {
 				}
 				redirect =  new QuizQuestionViewVisitor(question).getView();
 			}
-		}else{			
+		} else {			
 			redirect = QUIZ_THANKS_VIEW;
 		}
 		
@@ -158,24 +183,24 @@ public class QuizController {
 			model.put("sitting", sitting);
 
 			if(sitting.hasNextQuestion()) {
-				Question question = quizService.goToQuestion(sitting, qId);
+			Question question = quizService.goToQuestion(sitting, qId);
 				
-				//Verify the remaining time
+			//Verify the remaining time
 				if(sittingTimeManager.isExamMonitoring(sittingId) && 
 						sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds() == 0){
-					redirect = QUIZ_THANKS_VIEW;
-				}else{	
-					model.put("question", question);
-					model.put("questionViewHelper", new MultipleChoiceHelper(question));
+				redirect = QUIZ_THANKS_VIEW;
+			}else{	
+				model.put("question", question);
+				model.put("questionViewHelper", new MultipleChoiceHelper(question));
 					
 					if(sittingTimeManager.isExamMonitoring(sittingId)){
-						model.put("isExamInTime", "true");
+					model.put("isExamInTime", "true");
 						model.put("remainingTime",sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds());
-					}
-					redirect =  new QuizQuestionViewVisitor(question).getView();
-				}				
+				}
+				redirect =  new QuizQuestionViewVisitor(question).getView();
 			}
-
+			}
+			
 			if(QUIZ_THANKS_VIEW.equals(redirect)){
 				model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
 				sittingTimeManager.clearExamTimeMonitorBySitting(sittingId);
@@ -264,7 +289,6 @@ public class QuizController {
 				throw new TimeoutException("The exam time has expired.");			
 			}
 		}
-		
 		return dataProgress;
-	}	
+	}
 }
