@@ -145,9 +145,7 @@
 		<put-attribute name="questionKind" value="/WEB-INF/views/quiz/multipleChoiceQuestion.jsp"/>
 		<put-attribute name="progressTime" value="progress"/>
 	</definition>
-	<definition name="progress" template="/WEB-INF/views/quiz/progress.jsp">
-		<put-attribute name="time"/>
-	</definition>
+	<definition name="progress" template="/WEB-INF/views/quiz/progress.jsp"/>
 	
 	<!--
 	==========================================================================
