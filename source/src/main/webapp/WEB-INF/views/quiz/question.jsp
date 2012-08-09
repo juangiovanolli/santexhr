@@ -40,7 +40,7 @@
 			</c:forEach>	
 			<li class="next">
 				<a id="nextQuestion" >
-					&nbsp;${sitting.nextQuestionIndex == fn:length(sitting.exam.questions) ? 'finish':'Next'}
+					&nbsp;Next
 				</a>	   		
 	   		</li>   			
    		</ul>
