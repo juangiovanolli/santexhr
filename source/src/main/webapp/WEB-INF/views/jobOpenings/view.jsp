@@ -24,15 +24,28 @@
     .candidateSelectionCell {
         height: auto;
         padding: inherit;
+        width: 25%;
     }
     #candidatesSelectionTableDiv {
         height: 145px;
         overflow: auto;
     }
-    #addCandidates {
+    .okDialogButton {
         position: absolute;
         right: 0;
         bottom: 0;
+    }
+    #openSelectApplicant {
+        margin-left: 5px;
+        width: auto;
+    }
+    #selectedApplicant {
+        font-size: small;
+        margin-top: 3px;
+    }
+    #description {
+        resize: none;
+        height: 100px;
     }
 </style>
 <style type="text/css">
@@ -85,6 +98,22 @@
                     </a>
                 </div>
             </li>
+            <li>
+                <label for="selectedApplicant">Selected:</label>
+                <div>
+                    <span id="selectedApplicant">
+                        <c:choose>
+                            <c:when test="${!(jobOpening.selectedApplicant eq null)}">
+                                ${jobOpening.selectedApplicant.name}
+                            </c:when>
+                            <c:otherwise>
+                                No Selection
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                    <input id="openSelectApplicant" type="submit" class="submit" value="Select..."/>
+                </div>
+            </li>
             <li class="actions">
                 <input id="submit" type="submit" class="submit" name="save" value="Save"/>
                 <input type="submit" class="submit" name="cancel" value="Cancel"/>
@@ -100,7 +129,7 @@
 <div class="noneDisplay">
     <div id="modalContainer">
         <div id="candidatesList"></div>
-        <input type="button" value="Add selected" id="addCandidates"/>
+        <input type="button" value="Add selected" id="addCandidates" class="okDialogButton"/>
     </div>
     <c:forEach items="${candidateNotes}" var="candidateNote">
     <div id="noteDiv_${candidateNote.candidate.id}">
@@ -116,9 +145,18 @@
     oltk.include('jquery/cluetip/jquery.cluetip.js');
     oltk.include('jquery/ui/ui.datepicker.js');
     <c:choose><c:when test="${!(fn:substring(pageContext.response.locale,0,2) eq 'en')}">oltk.include('jquery/ui/i18n/ui.datepicker-${fn:substring(pageContext.response.locale,0,2)}.js');
-    $('#finishDate').datepicker($.datepicker.regional['${fn:substring(pageContext.response.locale,0,2)}']);</c:when><c:otherwise>$('#finishDate').datepicker();</c:otherwise></c:choose>
+
+    <c:choose>
+    <c:when test="${!(jobOpening.selectedApplicant eq null)}">
+    $.selectedApplicant = ${jobOpening.selectedApplicant.id};
+    </c:when>
+    <c:otherwise>
+    $.selectedApplicant = '';
+    </c:otherwise>
+    </c:choose>
 
     var onLoad = function() {
+        $('#finishDate').datepicker($.datepicker.regional['${fn:substring(pageContext.response.locale,0,2)}']);</c:when><c:otherwise>$('#finishDate').datepicker();</c:otherwise></c:choose>
         $.clueTips = function() {
             $('.candidate_name').cluetip({
                 width:425,
@@ -284,10 +322,15 @@
             data.push({
                 name:'submit',
                 value:'submit'
-            })
+            });
+            if ($.selectedApplicant != '') {
+                data.push({
+                    name:'sa',
+                    value:$.selectedApplicant
+                });
+            }
             $.post('<c:url value="update"/>',$.param(data), function (data, textStatus, jqXHR) {
-                document.documentElement.innerHTML = data;
-                onLoad();
+                window.location.reload();
             });
             return false;
         });
@@ -343,7 +386,7 @@
                 aap.push($(this)[0].value);
             });
             var atd = new Array();
-            $(':checked[id^="applicants"]').each(function() {
+            $('input:checkbox[id^="applicants"]:checked').each(function() {
                 atd.push($(this)[0].value);
             });
             $.ajax({
@@ -357,7 +400,40 @@
                     $.updatePager();
                     $.updateTable();
                     $.clueTips();
+                    if ($.selectedApplicant != '') {
+                        if (atd.indexOf($.selectedApplicant + '') >= 0) {
+                            $.selectedApplicant = '';
+                            $('span#selectedApplicant').html('No Selection');
+                        }
+                    }
                     $('#modalContainer').dialog('close');
+                }
+            });
+            return false;
+        });
+
+        $('#openSelectApplicant').click(function() {
+            var a = new Array();
+            $(':hidden[id^="_applicants"]').each(function() {
+                a.push($(this)[0].value);
+            });
+            $.ajax({
+                type:'POST',
+                url: '<c:url value="listApplicantsForJobOpeningSelection"/>',
+                data:{
+                    'a':a,
+                    'sa':$.selectedApplicant
+                },
+                success:function(html) {
+                    $.applicantSelectionDialog = $('<div></div>').html(html);
+                    $.applicantSelectionDialog.dialog({modal: true, width: 500});
+                    $.applicantSelectionDialog.find('#selectApplicant').click(function() {
+                        var radioChecked = $('input:radio[id^="applicantSelect"]:checked');
+                        $.selectedApplicant = radioChecked[0].value;
+                        $.applicantSelectionDialog.dialog('close');
+                        $('span#selectedApplicant').html(radioChecked.next().html());
+                        return false;
+                    });
                 }
             });
             return false;

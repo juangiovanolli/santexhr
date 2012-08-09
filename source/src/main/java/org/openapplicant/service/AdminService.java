@@ -1328,7 +1328,13 @@ public class AdminService extends ApplicationService {
      * @param applicantNotes
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void updateJobOpeningInfo(Long id, JobPosition jobPosition, Date finishDate, String client, String description, List<ApplicantNote> applicantNotes) {
+    public void updateJobOpeningInfo(Long id,
+                                     JobPosition jobPosition,
+                                     Date finishDate,
+                                     String client,
+                                     String description,
+                                     List<ApplicantNote> applicantNotes,
+                                     Candidate selectedApplicant) throws IllegalStateException {
         JobOpening jobOpening = getJobOpeningDao().find(id);
         jobOpening.setJobPosition(jobPosition);
         jobOpening.setFinishDate(finishDate);
@@ -1337,6 +1343,34 @@ public class AdminService extends ApplicationService {
         final List<ApplicantNote> oldApplicantNotes = jobOpening.getApplicantNotes();
         oldApplicantNotes.clear();
         oldApplicantNotes.addAll(applicantNotes);
+        if (selectedApplicant != null) {
+            List<Candidate> applicants = new ArrayList<Candidate>();
+            for (ApplicantNote applicantNote : oldApplicantNotes) {
+                applicants.add(applicantNote.getCandidate());
+            }
+            if (!applicants.contains(selectedApplicant)) {
+                throw new IllegalStateException("The selected applicant should be in the applicants list.");
+            }
+        }
+        jobOpening.setSelectedApplicant(selectedApplicant);
+        getJobOpeningDao().save(jobOpening);
+    }
+
+    /**
+     * Updates a job opening status
+     * @param id
+     * @param status
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void updateJobOpeningStatus(Long id, JobOpening.Status status) {
+        JobOpening jobOpening = getJobOpeningDao().find(id);
+        JobOpening.Status oldStatus = jobOpening.getStatus();
+        if (JobOpening.Status.getActiveStatus().contains(oldStatus) && status.equals(JobOpening.Status.ARCHIVED)) {
+            jobOpening.setLastActiveStatus(oldStatus);
+        } else if (JobOpening.Status.getActiveStatus().contains(status)) {
+            jobOpening.setLastActiveStatus(null);
+        }
+        jobOpening.setStatus(status);
         getJobOpeningDao().save(jobOpening);
     }
 
@@ -1345,7 +1379,14 @@ public class AdminService extends ApplicationService {
      * @param jobOpening
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void saveJobOpening(JobOpening jobOpening) {
+    public void saveJobOpening(JobOpening jobOpening) throws IllegalStateException {
+        List<Candidate> applicants = new ArrayList<Candidate>();
+        for (ApplicantNote applicantNote : jobOpening.getApplicantNotes()) {
+            applicants.add(applicantNote.getCandidate());
+        }
+        if (applicants.contains(jobOpening.getSelectedApplicant())) {
+            throw new IllegalStateException("The selected applicant should be in the applicants list.");
+        }
         getJobOpeningDao().save(jobOpening);
     }
 }
