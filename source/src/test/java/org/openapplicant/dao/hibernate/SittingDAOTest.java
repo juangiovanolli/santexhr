@@ -1,23 +1,14 @@
 package org.openapplicant.dao.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.openapplicant.dao.ISittingDAO;
+import org.openapplicant.domain.*;
+import org.openapplicant.domain.question.CodeQuestionBuilder;
+import org.openapplicant.domain.question.Question;
 
 import javax.annotation.Resource;
 
-import org.junit.Test;
-import org.openapplicant.dao.ISittingDAO;
-import org.openapplicant.domain.ExamBuilder;
-import org.openapplicant.domain.GradeBuilder;
-import org.openapplicant.domain.Response;
-import org.openapplicant.domain.ResponseBuilder;
-import org.openapplicant.domain.Score;
-import org.openapplicant.domain.Sitting;
-import org.openapplicant.domain.SittingBuilder;
-import org.openapplicant.domain.question.CodeQuestionBuilder;
-import org.openapplicant.domain.question.Question;
+import static org.junit.Assert.*;
 
 
 public class SittingDAOTest extends DomainObjectDAOTest<Sitting> {
@@ -96,7 +87,7 @@ public class SittingDAOTest extends DomainObjectDAOTest<Sitting> {
 		
 		Question q = sitting.advanceToNextQuestion();
 		Response response = new ResponseBuilder().build();
-		sitting.assignResponse(q.getId(), response);
+		sitting.assignResponse(q.getGuid(), response);
 		sitting = sittingDao.save(sitting);
 			
 		sitting.gradeResponse(response.getId(), new GradeBuilder().build());

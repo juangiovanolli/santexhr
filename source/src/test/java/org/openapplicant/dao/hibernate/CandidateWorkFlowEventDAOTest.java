@@ -1,57 +1,21 @@
 package org.openapplicant.dao.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.openapplicant.dao.ICandidateDAO;
-import org.openapplicant.dao.ICandidateWorkFlowEventDAO;
-import org.openapplicant.dao.ICompanyDAO;
-import org.openapplicant.dao.IExamDAO;
-import org.openapplicant.dao.ISittingDAO;
-import org.openapplicant.domain.Candidate;
-import org.openapplicant.domain.CandidateBuilder;
-import org.openapplicant.domain.Company;
-import org.openapplicant.domain.CompanyBuilder;
-import org.openapplicant.domain.CoverLetterBuilder;
-import org.openapplicant.domain.Exam;
-import org.openapplicant.domain.ExamBuilder;
-import org.openapplicant.domain.GradeBuilder;
-import org.openapplicant.domain.NoteBuilder;
-import org.openapplicant.domain.Response;
-import org.openapplicant.domain.ResponseBuilder;
-import org.openapplicant.domain.ResumeBuilder;
-import org.openapplicant.domain.Score;
-import org.openapplicant.domain.Sitting;
-import org.openapplicant.domain.SittingBuilder;
-import org.openapplicant.domain.User;
-import org.openapplicant.domain.UserBuilder;
-import org.openapplicant.domain.event.AddNoteToCandidateEvent;
-import org.openapplicant.domain.event.CandidateCreatedByUserEvent;
-import org.openapplicant.domain.event.CandidateCreatedEvent;
-import org.openapplicant.domain.event.CandidateStatusChangedEvent;
-import org.openapplicant.domain.event.CandidateWorkFlowEvent;
-import org.openapplicant.domain.event.CreateExamLinkForCandidateEvent;
-import org.openapplicant.domain.event.FacilitatorReceivedEmailEvent;
-import org.openapplicant.domain.event.FacilitatorRejectedResumeEvent;
-import org.openapplicant.domain.event.FacilitatorRequestedResumeEvent;
-import org.openapplicant.domain.event.FacilitatorSentExamLinkEvent;
-import org.openapplicant.domain.event.SittingCompletedEvent;
-import org.openapplicant.domain.event.SittingCreatedEvent;
-import org.openapplicant.domain.event.SittingGradedEvent;
-import org.openapplicant.domain.event.UserAttachedCoverLetterEvent;
-import org.openapplicant.domain.event.UserAttachedResumeEvent;
-import org.openapplicant.domain.event.UserSentExamLinkEvent;
+import org.openapplicant.dao.*;
+import org.openapplicant.domain.*;
+import org.openapplicant.domain.event.*;
 import org.openapplicant.domain.link.CandidateExamLink;
 import org.openapplicant.domain.link.CandidateExamLinkBuilder;
 import org.openapplicant.domain.question.Question;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 @ContextConfiguration(locations="/applicationContext-test.xml")
@@ -240,7 +204,7 @@ public class CandidateWorkFlowEventDAOTest
 		
 		Question question = sitting.advanceToNextQuestion();
 		Response response = new ResponseBuilder().build();
-		sitting.assignResponse(question.getId(), response);
+		sitting.assignResponse(question.getGuid(), response);
 		
 		sitting = sittingDao.save(sitting);
 		sitting.gradeResponse(

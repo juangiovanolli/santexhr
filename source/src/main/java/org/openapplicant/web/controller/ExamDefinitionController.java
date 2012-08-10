@@ -136,7 +136,8 @@ public class ExamDefinitionController extends AdminController {
 				cmd.getDescription(),
 				cmd.getNumberOfQuestionsWanted(),
 				cmd.isActive(),
-                cmd.getCategoriesPercentage()
+                cmd.getCategoriesPercentage(),
+                cmd.getTotalExamTime()
 		);
 		return "redirect:view?ed="+cmd.getArtifactId();
 	}

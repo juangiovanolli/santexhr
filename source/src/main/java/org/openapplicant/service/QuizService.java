@@ -2,11 +2,7 @@ package org.openapplicant.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openapplicant.domain.Candidate;
-import org.openapplicant.domain.Company;
-import org.openapplicant.domain.Exam;
-import org.openapplicant.domain.Response;
-import org.openapplicant.domain.Sitting;
+import org.openapplicant.domain.*;
 import org.openapplicant.domain.event.CandidateCreatedEvent;
 import org.openapplicant.domain.event.SittingCompletedEvent;
 import org.openapplicant.domain.event.SittingCreatedEvent;
@@ -14,7 +10,6 @@ import org.openapplicant.domain.link.ExamLink;
 import org.openapplicant.domain.question.Question;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -42,7 +37,7 @@ public class QuizService extends ApplicationService {
 	
 	/**
 	 * Sets the examLink to used.
-	 * @param examLink
+	 * @param guid
 	 */
 	public void useExamLink(String guid) {
 	    	ExamLink examLink = getExamLinkDao().findByGuidOrNull(guid);
@@ -75,7 +70,7 @@ public class QuizService extends ApplicationService {
 	/**
 	 * This retruns 
 	 * @param candidate a partially filled in candidate
-	 * @param companyId the company to which the candidate will be associated
+	 * @param company the company to which the candidate will be associated
 	 * @return
 	 */
 	public Candidate resolveCandidate(Candidate candidate, Company company) {	    
@@ -100,11 +95,9 @@ public class QuizService extends ApplicationService {
 	 * new.
 	 * 
 	 * @param candidate the candidate to a create a sitting for.
-	 * @param companyId the id of the company the candidate will be added to.
 	 * @param examArtifactId the artifactId of the exam to take
 	 * @return the created sitting
 	 */
-	@Transactional(isolation=Isolation.SERIALIZABLE)
 	public Sitting createSitting(Candidate candidate, String examArtifactId) {
 		// FIXME: what if artifactId refers to a different exam version after the break?
 		Exam exam = findExamByArtifactId(examArtifactId);
@@ -130,24 +123,22 @@ public class QuizService extends ApplicationService {
 	/**
 	 * Retrieves the next question and updates the sitting index.
 	 * 
-	 * @param sittingId
+	 * @param sitting
 	 * @return
 	 */
 	public Question nextQuestion(Sitting sitting) {
         	Question result = sitting.advanceToNextQuestion();
-    		evaluateCandidateStatus(sitting);
         	return result;
 	}
 	
 	/**
 	 * Retrieves the previous question and updates the sitting index.
 	 * 
-	 * @param sittingId
+	 * @param sitting
 	 * @return
 	 */
 	public Question previousQuestion(Sitting sitting) {
         	Question result = sitting.backToPreviousQuestion();
-    		evaluateCandidateStatus(sitting);
         	return result;
 	}
 	
@@ -155,12 +146,11 @@ public class QuizService extends ApplicationService {
 	 * Go to question.
 	 *
 	 * @param sitting the sitting
-	 * @param questionId the question id
+	 * @param questionGuid the question guid
 	 * @return the question
 	 */
-	public Question goToQuestion(Sitting sitting, Long questionId) {
-		Question result = sitting.goToNextQuestion(questionId);
-		evaluateCandidateStatus(sitting);
+	public Question goToQuestion(Sitting sitting, String questionGuid) {
+		Question result = sitting.goToNextQuestion(questionGuid);
     	return result;		
 	}
 	
@@ -171,12 +161,11 @@ public class QuizService extends ApplicationService {
 	 *
 	 * @param sitting the sitting
 	 */
-	public void evaluateCandidateStatus(Sitting sitting) {
-    	if(!sitting.hasNextQuestion()) {
-    		sitting.getCandidate().setStatus(Candidate.Status.READY_FOR_GRADING);
-    		getCandidateDao().save(sitting.getCandidate());
-    		getCandidateWorkFlowEventDao().save(new SittingCompletedEvent(sitting));
-    	}
+	public void doSittingFinished(Sitting sitting) {
+        sitting.setStatus(Sitting.Status.FINISHED);
+        sitting.getCandidate().setStatus(Candidate.Status.READY_FOR_GRADING);
+        getCandidateDao().save(sitting.getCandidate());
+        getCandidateWorkFlowEventDao().save(new SittingCompletedEvent(sitting));
     	getSittingDao().save(sitting);		
 	}
 	
@@ -184,7 +173,7 @@ public class QuizService extends ApplicationService {
 	/**
 	 * Retrieves a sitting with the given id
 	 * 
-	 * @param sittingId
+	 * @param id
 	 * @return Sitting
 	 * @throws DataRetrievalFailureException
 	 *             if no sitting has sittingId
@@ -208,14 +197,14 @@ public class QuizService extends ApplicationService {
 	/**
 	 * Persists a candidate's response to a question.
 	 * 
-	 * @param sittingId the id of the current sitting
-	 * @param questionId the id of the question responded to
+	 * @param sittingGuid the guid of the current sitting
+	 * @param questionGuid the guid of the question responded to
 	 * @param response the candidate's response.
 	 * @return the saved response.
 	 */
-	public Response submitResponse(Long sittingId, Long questionId, Response response) {
-		Sitting sitting = getSittingDao().find(sittingId);
-		sitting.assignResponse(questionId, response);
+	public Response submitResponse(String sittingGuid, String questionGuid, Response response) {
+		Sitting sitting = getSittingDao().findByGuid(sittingGuid);
+		sitting.assignResponse(questionGuid, response);
 		getSittingDao().save(sitting);
 		return getResponseDao().save(response);
 	}

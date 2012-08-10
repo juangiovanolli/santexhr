@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
@@ -132,85 +131,91 @@ public class QuizController {
 		
 	    return "redirect:question?s="+sitting.getGuid();
 	}
-	
-	@RequestMapping(method=GET)
-	public String question(	@RequestParam(value="s") String guid,
-							Map<String,Object> model, HttpServletRequest req) {
-		logger.info("Question: building question");
-		Sitting sitting = quizService.findSittingByGuid(guid);
-		String sittingId = String.valueOf(sitting.getId());
-		
-		model.put("sitting", sitting);	
-		String redirect = "";
-		
-		if(sitting.hasNextQuestion()) {
-			Question question = quizService.nextQuestion(sitting);
-		
-			sittingTimeManager.timerProcess(sittingId, sitting.getExam());
-			
-			//Verify the remaining time
-			if(sittingTimeManager.isExamMonitoring(sittingId) && 
-					sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds() == 0){
-				redirect = QUIZ_THANKS_VIEW;
-			}else{			
-				model.put("question", question);
-				model.put("questionViewHelper", new MultipleChoiceHelper(question));
-				
-				if(sittingTimeManager.isExamMonitoring(sittingId)){
-					model.put("isExamInTime", "true");
-					model.put("remainingTime", sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds());
-				}
-				redirect =  new QuizQuestionViewVisitor(question).getView();
-			}
-		} else {			
-			redirect = QUIZ_THANKS_VIEW;
-		}
-		
-		if(QUIZ_THANKS_VIEW.equals(redirect)){
-			model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
-			sittingTimeManager.clearExamTimeMonitorBySitting(sittingId);
-		}
-		
-		return redirect;
-	}
-	
-	@RequestMapping(method=GET)
-	public String goToQuestion(	@RequestParam(value="s") String guid,@RequestParam(value="qId") Long qId, @RequestParam("id") String sittingId,
-			Map<String,Object> model ) {
-			String redirect = "";
-			
-			Sitting sitting = quizService.findSittingByGuid(guid);
-			model.put("sitting", sitting);
 
-			if(sitting.hasNextQuestion()) {
-			Question question = quizService.goToQuestion(sitting, qId);
-				
-			//Verify the remaining time
-				if(sittingTimeManager.isExamMonitoring(sittingId) && 
-						sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds() == 0){
-				redirect = QUIZ_THANKS_VIEW;
-			}else{	
-				model.put("question", question);
-				model.put("questionViewHelper", new MultipleChoiceHelper(question));
-					
-					if(sittingTimeManager.isExamMonitoring(sittingId)){
-					model.put("isExamInTime", "true");
-						model.put("remainingTime",sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds());
-				}
-				redirect =  new QuizQuestionViewVisitor(question).getView();
-			}
-			}
-			
-			if(QUIZ_THANKS_VIEW.equals(redirect)){
-				model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
-				sittingTimeManager.clearExamTimeMonitorBySitting(sittingId);
-			}
-			
-			return redirect;
+    @RequestMapping(method = GET)
+    public String question(@RequestParam(value = "s") String guid,
+                           Map<String, Object> model, HttpServletRequest req) {
+        logger.info("Question: building question");
+        Sitting sitting = quizService.findSittingByGuid(guid);
+        String sittingGuid = sitting.getGuid();
+
+        model.put("sitting", sitting);
+        String redirect;
+
+        if (!sitting.isFinished()) {
+            Question question;
+            if (sitting.hasNextQuestion()) {
+                question = quizService.nextQuestion(sitting);
+            } else {
+                question = sitting.getCurrentQuestion();
+            }
+
+            sittingTimeManager.timerProcess(sittingGuid, sitting.getExam());
+
+            //Verify the remaining time
+            if (sittingTimeManager.isExamMonitoring(sittingGuid) &&
+                    sittingTimeManager.getExamTimeBySittingGuid(sittingGuid).getSeconds() == 0) {
+                redirect = QUIZ_THANKS_VIEW;
+            } else {
+                model.put("question", question);
+                model.put("questionViewHelper", new MultipleChoiceHelper(question));
+
+                if (sittingTimeManager.isExamMonitoring(sittingGuid)) {
+                    model.put("isExamInTime", "true");
+                    model.put("remainingTime", sittingTimeManager.getExamTimeBySittingGuid(sittingGuid).getSeconds());
+                }
+                redirect = new QuizQuestionViewVisitor(question).getView();
+            }
+        } else {
+            redirect = QUIZ_THANKS_VIEW;
+        }
+
+        if (QUIZ_THANKS_VIEW.equals(redirect)) {
+            model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
+            sittingTimeManager.clearExamTimeMonitorBySitting(sittingGuid);
+            quizService.doSittingFinished(sitting);
+        }
+
+        return redirect;
+    }
+	
+	@RequestMapping(method=GET)
+	public String goToQuestion(	@RequestParam(value="s") String guid,@RequestParam(value="qg") String questionGuid,
+			Map<String,Object> model ) {
+        String redirect = QUIZ_THANKS_VIEW;
+
+        Sitting sitting = quizService.findSittingByGuid(guid);
+        model.put("sitting", sitting);
+
+        if (!sitting.isFinished()) {
+            Question question = quizService.goToQuestion(sitting, questionGuid);
+
+            //Verify the remaining time
+            if (sittingTimeManager.isExamMonitoring(guid) &&
+                    sittingTimeManager.getExamTimeBySittingGuid(guid).getSeconds() == 0) {
+                redirect = QUIZ_THANKS_VIEW;
+            } else {
+                model.put("question", question);
+                model.put("questionViewHelper", new MultipleChoiceHelper(question));
+
+                if (sittingTimeManager.isExamMonitoring(guid)) {
+                    model.put("isExamInTime", "true");
+                    model.put("remainingTime", sittingTimeManager.getExamTimeBySittingGuid(guid).getSeconds());
+                }
+                redirect = new QuizQuestionViewVisitor(question).getView();
+            }
+        }
+
+        if (QUIZ_THANKS_VIEW.equals(redirect)) {
+            model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
+            sittingTimeManager.clearExamTimeMonitorBySitting(guid);
+        }
+
+        return redirect;
 	}
 	
 	@RequestMapping(method=GET)
-	public String prevQuestion(	@RequestParam(value="s") String guid, @RequestParam("id") String sittingId,
+	public String prevQuestion(	@RequestParam(value="s") String guid,
 							Map<String,Object> model) {
 		String redirect = "";
 		Sitting sitting = quizService.findSittingByGuid(guid);
@@ -220,16 +225,15 @@ public class QuizController {
 			Question question = quizService.previousQuestion(sitting);
 			
 			//Verify the remaining time
-			if(sittingTimeManager.isExamMonitoring(sittingId) && 
-					sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds() == 0){
+			if(sittingTimeManager.isExamMonitoring(guid) &&
+					sittingTimeManager.getExamTimeBySittingGuid(guid).getSeconds() == 0){
 				redirect = QUIZ_THANKS_VIEW;
-			}else{	
-			
+			} else {
 				model.put("question", question);
 				model.put("questionViewHelper", new MultipleChoiceHelper(question));
-				if(sittingTimeManager.isExamMonitoring(sittingId)){
+				if(sittingTimeManager.isExamMonitoring(guid)){
 					model.put("isExamInTime", "true");
-					model.put("remainingTime", sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds());
+					model.put("remainingTime", sittingTimeManager.getExamTimeBySittingGuid(guid).getSeconds());
 				}
 				redirect =  new QuizQuestionViewVisitor(question).getView();
 			}
@@ -269,26 +273,22 @@ public class QuizController {
 	} 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public Map<String,Object>  progress(@RequestParam("remainingTime") long clientRemainingTime,
-			@RequestParam("id") String sittingId) throws TimeoutException{
-		Map<String,Object> dataProgress = new HashMap<String,Object>();
-		
-		if(sittingTimeManager.isExamMonitoring(sittingId)){
-			long serverRemainingTime = sittingTimeManager.getExamTimeBySittingId(sittingId).getSeconds();
+	public String  progress(@RequestParam("remainingTime") long clientRemainingTime,
+			@RequestParam("guid") String guid) throws TimeoutException {
+		if(sittingTimeManager.isExamMonitoring(guid)){
+			long serverRemainingTime = sittingTimeManager.getExamTimeBySittingGuid(guid).getSeconds();
 			long serverRemainingTimeMin = serverRemainingTime;
 			long serverRemainingTimeMax = serverRemainingTime + 2;
 			
 			if(serverRemainingTime > 2)
 				serverRemainingTimeMin = serverRemainingTime - 2;		
 			
-			if( clientRemainingTime > serverRemainingTimeMin && clientRemainingTime <= serverRemainingTimeMax){
-				dataProgress.put("remainingTime", serverRemainingTime);
-			}else{
-				dataProgress.put("remainingTime", "");
-				logger.info("The exam time has expired. SittingId: " + sittingId);
+			if( !(clientRemainingTime > serverRemainingTimeMin && clientRemainingTime <= serverRemainingTimeMax)) {
+				logger.info("The exam time has expired. SittingGuid: " + guid);
+                sittingTimeManager.clearExamTimeMonitorBySitting(guid);
 				throw new TimeoutException("The exam time has expired.");			
 			}
 		}
-		return dataProgress;
+		return "progress";
 	}
 }

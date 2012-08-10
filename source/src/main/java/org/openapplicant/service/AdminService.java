@@ -937,13 +937,14 @@ public class AdminService extends ApplicationService {
 	@Transactional(isolation=Isolation.SERIALIZABLE)
 	public void updateExamDefinitionInfo(String examDefinitionArtifactId, String name,
 			String genre, String description, Integer numberOfQuestionsWanted, boolean isActive,
-            List<CategoryPercentage> categoriesPercentage) {
+            List<CategoryPercentage> categoriesPercentage, Long totalExamTime) {
 		ExamDefinition examDefinition = findExamDefinitionByArtifactId(examDefinitionArtifactId);
 		examDefinition.setName(name);
 		examDefinition.setGenre(genre);
 		examDefinition.setDescription(description);
 		examDefinition.setNumberOfQuestionsWanted(numberOfQuestionsWanted);
 		examDefinition.setActive(isActive);
+        examDefinition.setTotalExamTime(totalExamTime);
         // Delete not present categories percentage
         List<CategoryPercentage> currentCategoriesPercentage = examDefinition.getCategoriesPercentage();
         for (int i = 0; i < currentCategoriesPercentage.size(); i++) {
@@ -1049,6 +1050,7 @@ public class AdminService extends ApplicationService {
 			exam.setDescription(examDefinition.getDescription());
 			exam.setGenre(examDefinition.getGenre());
 			exam.setName(examDefinition.getName());
+            exam.setTotalTime(examDefinition.getTotalExamTime());
 			Random rnd = new Random();
 			Double percentLeft = 100.0;
 			for (CategoryPercentage categoryPercentage : examDefinition.getCategoriesPercentage()) {

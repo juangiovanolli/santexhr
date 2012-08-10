@@ -12,7 +12,7 @@ public class DwrQuizService {
 		quizService = value;
 	}
 
-	public void submitResponse(Long sittingId, Long questionId, Response response) {
-		quizService.submitResponse(sittingId, questionId, response);
+	public void submitResponse(String sittingGuid, String questionGuid, Response response) {
+		quizService.submitResponse(sittingGuid, questionGuid, response);
 	}
 }

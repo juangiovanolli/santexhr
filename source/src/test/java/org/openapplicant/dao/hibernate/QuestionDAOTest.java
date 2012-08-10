@@ -1,28 +1,18 @@
 package org.openapplicant.dao.hibernate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import javax.annotation.Resource;
-
 import org.junit.Test;
 import org.openapplicant.dao.IGradeDAO;
 import org.openapplicant.dao.IQuestionDAO;
 import org.openapplicant.dao.IResponseDAO;
 import org.openapplicant.dao.ISittingDAO;
-import org.openapplicant.dao.hibernate.QuestionDAO;
-import org.openapplicant.domain.Exam;
-import org.openapplicant.domain.ExamBuilder;
-import org.openapplicant.domain.Grade;
-import org.openapplicant.domain.GradeBuilder;
-import org.openapplicant.domain.QuestionStatistics;
-import org.openapplicant.domain.Response;
-import org.openapplicant.domain.ResponseBuilder;
-import org.openapplicant.domain.Score;
-import org.openapplicant.domain.Sitting;
-import org.openapplicant.domain.SittingBuilder;
+import org.openapplicant.domain.*;
 import org.openapplicant.domain.question.CodeQuestionBuilder;
 import org.openapplicant.domain.question.Question;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 
 public class QuestionDAOTest extends DomainObjectDAOTest<Question> {
@@ -93,8 +83,8 @@ public class QuestionDAOTest extends DomainObjectDAOTest<Question> {
 		responseDao.save(response2);
 		
 		
-		sitting1.assignResponse(question.getId(),response1);
-		sitting2.assignResponse(question.getId(), response2);
+		sitting1.assignResponse(question.getGuid(),response1);
+		sitting2.assignResponse(question.getGuid(), response2);
 
 		
 		sittingDao.save(sitting1);
@@ -131,7 +121,7 @@ public class QuestionDAOTest extends DomainObjectDAOTest<Question> {
 				new ExamBuilder().withQuestions(question).build()).build();
 
 		sittingDao.save(sitting);
-		sitting.assignResponse(question.getId(), response);
+		sitting.assignResponse(question.getGuid(), response);
 		sittingDao.save(sitting);
 
 		sitting.gradeResponse(response.getId(), new GradeBuilder()
@@ -151,7 +141,7 @@ public class QuestionDAOTest extends DomainObjectDAOTest<Question> {
 		Sitting sitting = new SittingBuilder().withExam(
 				new ExamBuilder().withQuestions(question).build()).build();
 		sittingDao.save(sitting);
-		sitting.assignResponse(question.getId(), response);
+		sitting.assignResponse(question.getGuid(), response);
 		sittingDao.save(sitting);
 
 		sitting.gradeResponse(response.getId(), new GradeBuilder()

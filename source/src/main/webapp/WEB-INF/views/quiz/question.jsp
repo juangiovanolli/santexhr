@@ -77,9 +77,7 @@
 <!-- /section -->
 
 <form id="openapplicant_question_form" class="openapplicant_quiz_question">
-	
-	<input type="hidden" id="sittingId" value="${sitting.id}"/>
-	<input type="hidden" id="questionId" value="${question.id}"/>
+
 	<input type="hidden" id="remainingTime" value="${remainingTime}"/>
 	<div class="row">	   
 	   <span id="name"><c:out value="${sitting.exam.name}"/>
@@ -95,7 +93,7 @@
 	   		</li>
 			<c:forEach items="${sitting.exam.questions}" var="questionIndex" varStatus="index">
 				<li class="${sitting.nextQuestionIndex == index.index + 1?'active':''}">
-					<a class="goToQuestion" id="goToQuestion_${questionIndex.id}"> <c:out value="${index.index + 1}"/></a> 
+					<a class="goToQuestion" id="goToQuestion_${questionIndex.guid}"> <c:out value="${index.index + 1}"/></a>
 				</li> 
 			</c:forEach>	
 			<li class="next">
@@ -142,7 +140,7 @@
 					$.ajax({
 						type: "POST",
 						url: '<c:url value="progress"/>',
-						data: {remainingTime:totalTime,id:$('#sittingId').val()},
+						data: {remainingTime:totalTime,guid:'${sitting.guid}'},
 						success: function (data){
 							if(totalTime == 0){
 								$(document).stopTime('keepalive');					
@@ -170,25 +168,23 @@
 
 	var submittedResponse = false;
 	
-	function canContinue() {
+	var canContinue = function () {
 		submittedResponse = true;
 	}
 
 	function submitResponse() {
-		var sittingId = $('#sittingId').val();
-		var questionId = $('#questionId').val();
 		var response = openapplicant.quiz.helper.recorder.getResponse();
-		QuizService.submitResponse(sittingId, questionId, response, canContinue);
+		QuizService.submitResponse('${sitting.guid}', '${question.guid}', response, canContinue);
 	}
 	
 	function nextQuestion() {
 		if(!submittedResponse) { setTimeout("nextQuestion()", 10); }
-		else { window.location = "<c:url value='/quiz/question?s=${sitting.guid}&id=${sitting.id}'/>"; }
+		else { window.location = "<c:url value='/quiz/question?s=${sitting.guid}'/>"; }
 	}
 	
 	function previousQuestion() {
 		if(!submittedResponse) { setTimeout("previousQuestion()", 10); }
-		else { window.location = "<c:url value='/quiz/prevQuestion?s=${sitting.guid}&id=${sitting.id}'/>"; }
+		else { window.location = "<c:url value='/quiz/prevQuestion?s=${sitting.guid}'/>"; }
 	}
 	
 	$('#nextQuestion').click( function() {
@@ -206,7 +202,7 @@
 	$('.goToQuestion').click( function() {
 		openapplicant.quiz.helper.timer.destroy();		
 		submitResponse();
-		var qId = $(this).attr("id").split("_")[1];
-		$(location).attr('href',"<c:url value='/quiz/goToQuestion?s=${sitting.guid}&qId=" + qId + "&id=${sitting.id}'/>");
+		var qg = $(this).attr("id").split("_")[1];
+		$(location).attr('href',"<c:url value='/quiz/goToQuestion'/>?s=${sitting.guid}&qg=" + qg);
 	});
 </script>

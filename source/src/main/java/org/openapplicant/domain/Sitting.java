@@ -39,6 +39,8 @@ public class Sitting extends DomainObject {
 		new ArrayList<QuestionAndResponse>();
 	
 	private int nextQuestionIndex = 0;
+
+    private Status status = Status.STARTED;
 	
 	/**
 	 * @param exam the sitting's exam.
@@ -107,13 +109,13 @@ public class Sitting extends DomainObject {
 	/**
 	 * Assigns a response to a question with the given id.
 	 * 
-	 * @param questionId the id of the question responded to
+	 * @param questionGuid the guid of the question responded to
 	 * @param response the question's response
 	 */
-	public void assignResponse(long questionId, Response response) {
+	public void assignResponse(String questionGuid, Response response) {
 		Assert.notNull(response);
 		
-		QuestionAndResponse qar = findQuestionAndResponseByQuestionId(questionId);
+		QuestionAndResponse qar = findQuestionAndResponseByQuestionGuid(questionGuid);
 		responseSummary.addResponse(response);
 		qar.setResponse(response); 
 	}
@@ -134,7 +136,7 @@ public class Sitting extends DomainObject {
 	 */
 	@Transient
 	public boolean isFinished() {
-	    return !hasNextQuestion();
+	    return getStatus().equals(Status.FINISHED);
 	}
 	
 	/**
@@ -147,6 +149,15 @@ public class Sitting extends DomainObject {
 		nextQuestionIndex = nextQuestionIndex + 1;
 		return result;
 	}
+
+    @Transient
+    public Question getCurrentQuestion() {
+        if (nextQuestionIndex == 0) {
+            return questionsAndResponses.get(nextQuestionIndex).getQuestion();
+        } else {
+            return questionsAndResponses.get(nextQuestionIndex - 1).getQuestion();
+        }
+    }
 	
 	/**
 	 * @return the previous question
@@ -161,14 +172,14 @@ public class Sitting extends DomainObject {
 	/**
 	 * Go to next question.
 	 *
-	 * @param questionId the question id
+	 * @param questionGuid the question guid
 	 * @return the question
 	 */
-	public Question goToNextQuestion(Long questionId) {
+	public Question goToNextQuestion(String questionGuid) {
 		
 		for (QuestionAndResponse questionAndResponse: questionsAndResponses) {
 			Question question = questionAndResponse.getQuestion();
-			if (question.getId().equals(questionId)) {
+			if (question.getGuid().equals(questionGuid)) {
 				nextQuestionIndex = questionsAndResponses.indexOf(questionAndResponse) + 1;
 				return question;
 			}
@@ -276,15 +287,27 @@ public class Sitting extends DomainObject {
 		return true;
 	}
 	
-	private QuestionAndResponse findQuestionAndResponseByQuestionId(long questionId) {
+	private QuestionAndResponse findQuestionAndResponseByQuestionGuid(String questionGuid) {
 		for(QuestionAndResponse each: questionsAndResponses) {
-			if(each.getQuestion().getId() == null) {
+			if(each.getQuestion().getGuid() == null) {
 				continue;
 			}
-			if(each.getQuestion().getId().equals(questionId)) {
+			if(each.getQuestion().getGuid().equals(questionGuid)) {
 				return each;
 			}
 		}
-		throw new IllegalArgumentException("question not found. id:" + questionId);
+		throw new IllegalArgumentException("question not found. guid:" + questionGuid);
 	}
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public enum Status {
+        STARTED, FINISHED;
+    }
 }

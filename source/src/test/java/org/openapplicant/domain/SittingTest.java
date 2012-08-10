@@ -1,16 +1,10 @@
 package org.openapplicant.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-import org.openapplicant.domain.Candidate;
-import org.openapplicant.domain.Response;
-import org.openapplicant.domain.Score;
-import org.openapplicant.domain.Sitting;
 import org.openapplicant.domain.question.CodeQuestionBuilder;
 import org.openapplicant.domain.question.Question;
+
+import static org.junit.Assert.*;
 
 
 public class SittingTest {
@@ -58,7 +52,7 @@ public class SittingTest {
 		Question q = sitting.getExam().getQuestions().get(0);
 		Response r = new ResponseBuilder().build();
 		
-		sitting.assignResponse(q.getId(), r);
+		sitting.assignResponse(q.getGuid(), r);
 		
 		assertEquals(r, sitting.getQuestionsAndResponses().get(0).getResponse());
 	}
@@ -92,13 +86,13 @@ public class SittingTest {
 									.withGradeOfZero()
 									.withId(10L)
 									.build();
-		sitting.assignResponse(question1.getId(), response1);
+		sitting.assignResponse(question1.getGuid(), response1);
 		
 		Response response2 = new ResponseBuilder()
 									.withGradeOfZero()
 									.withId(11L)
 									.build();
-		sitting.assignResponse(question2.getId(), response2);
+		sitting.assignResponse(question2.getGuid(), response2);
 		
 		assertEquals(new Score(0), sitting.getScore());
 		
@@ -145,7 +139,7 @@ public class SittingTest {
 									.withId(10L)
 									.build();
 		
-		sitting.assignResponse(q1.getId(), response1);
+		sitting.assignResponse(q1.getGuid(), response1);
 		
 		assertTrue(sitting.hasNextQuestion());
 		
@@ -179,7 +173,7 @@ public class SittingTest {
 									.withGradeOfZero()
 									.withId(10L)
 									.build();
-		sitting.assignResponse(q1.getId(), response1);
+		sitting.assignResponse(q1.getGuid(), response1);
 		
 		// 100/3 is an arithmetic exception, unless we specify a rounding mode.
 		sitting.gradeResponse(

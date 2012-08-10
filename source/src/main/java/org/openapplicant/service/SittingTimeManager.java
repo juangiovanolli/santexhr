@@ -1,15 +1,15 @@
 package org.openapplicant.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openapplicant.domain.Exam;
 import org.openapplicant.domain.question.Question;
 import org.openapplicant.monitor.ExamTimeMonitor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class SittingTimeManager {
@@ -18,33 +18,33 @@ public class SittingTimeManager {
 	
 	private final Map<String,ExamTimeMonitor> sittingExamTimeMonitorMap = new ConcurrentHashMap<String,ExamTimeMonitor>();
 	
-	public ExamTimeMonitor getExamTimeBySittingId(String sittingId){
-		return sittingExamTimeMonitorMap.get(sittingId);
+	public ExamTimeMonitor getExamTimeBySittingGuid(String sittingGuid){
+		return sittingExamTimeMonitorMap.get(sittingGuid);
 	}
 	
-	public void createExamTimeMonitorForSitting(String sittingId, long totalExamTime){
-		sittingExamTimeMonitorMap.put(sittingId, new ExamTimeMonitor(totalExamTime));
+	public void createExamTimeMonitorForSitting(String sittingGuid, long totalExamTime){
+		sittingExamTimeMonitorMap.put(sittingGuid, new ExamTimeMonitor(totalExamTime));
 	}
 	
-	public void clearExamTimeMonitorBySitting(String sittingId){
-		sittingExamTimeMonitorMap.remove(sittingId);
+	public void clearExamTimeMonitorBySitting(String sittingGuid){
+		sittingExamTimeMonitorMap.remove(sittingGuid);
 	}
 	
-	public boolean isExamMonitoring(String sittingId){
-		return sittingExamTimeMonitorMap.get(sittingId) != null;
+	public boolean isExamMonitoring(String sittingGuid){
+		return sittingExamTimeMonitorMap.get(sittingGuid) != null;
 	}
 
-	public void timerProcess(String sittingId, Exam exam){
+	public void timerProcess(String sittingGuid, Exam exam){
 		logger.debug("timerProcess()");
 		
 		long totalExamTime = 0;
 		//Counter time on the server side.
-		if(sittingExamTimeMonitorMap.get(sittingId) == null){			
+		if(sittingExamTimeMonitorMap.get(sittingGuid) == null){			
 			totalExamTime = calculateTotalExamTime(exam);			
 			//Verify if the exam is timed or untimed.
 			if(totalExamTime > 0){				
 				//examMonitor = new ExamTimeMonitor(totalExamTime);
-				createExamTimeMonitorForSitting(sittingId,totalExamTime);
+				createExamTimeMonitorForSitting(sittingGuid,totalExamTime);
 			}
 		}
 	}
