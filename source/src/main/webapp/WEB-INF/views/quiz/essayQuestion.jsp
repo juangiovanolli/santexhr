@@ -19,10 +19,6 @@
                     </li>
                 </ul>
 
-                <p class="next-button"><a href="test4.html" name="Continue">Continue</a></p>
-
-
-
 <script type="text/javascript">
     oltk.include('openapplicant/quiz/helper/recorder.js');
     openapplicant.quiz.helper.recorder.init('#response');

@@ -29,17 +29,22 @@
 
                 <!-- nav -->
                 <ul id="nav-arrows">
+                    <c:set var="hasPreviousQuestion" value="${sitting.nextQuestionIndex -2 >= 0?'':'disabled'}"></c:set>
+                    <c:if test="${sitting.nextQuestionIndex -2 >= 0}">
                     <li id="arrow-left"><a href="#"><span>Left</span></a></li>
+                    </c:if>
                     <ul id="nav-numbers">
-                        <li class="current-nav"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#" class="i-was-there">4</a></li>
-                        <li><a href="#">5</a></li>
+                        <c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponseIndex" varStatus="index">
+                            <li<c:if test="${questionAndResponseIndex.question eq question}"> class='current-nav'</c:if>>
+                                <a id="goToQuestion_${questionAndResponseIndex.question.guid}"
+                                   <c:if test="${!(questionAndResponseIndex.response eq null) && !(questionAndResponseIndex.response.content eq null)}">class="i-was-there"</c:if>><c:out value="${index.index + 1}"/></a></li>
+                        </c:forEach>
                         <li id="of-total">of</li>
-                        <li><a href="#">20</a></li>
+                        <li><a><c:out value="${fn:length(sitting.questionsAndResponses)}"/></a></li>
                     </ul>
+                    <c:if test="${sitting.nextQuestionIndex != fn:length(sitting.exam.questions)}">
                     <li id="arrow-right"><a href="#"><span>Right</span></a></li>
+                    </c:if>
                 </ul>
                 <!-- /nav -->
 
@@ -67,6 +72,13 @@
             </div>
             <!-- /questions  -->
 
+            <c:if test="${sitting.nextQuestionIndex != fn:length(sitting.exam.questions)}">
+                <p class="next-button"><a id="nextQuestion" name="Continue">Continue</a></p>
+            </c:if>
+            <li class="next">
+                <p class="next-button"><a id="finish" name="Finish Exam">Finish</a></p>
+            </li>
+
         </div>
         <!-- /wide -->
 
@@ -82,25 +94,13 @@
 	<div class="row">	   
 	   <span id="name"><c:out value="${sitting.exam.name}"/>
 	   <c:out value="${sitting.nextQuestionIndex}"/> of <c:out value="${fn:length(sitting.exam.questions)}"/></span>   
-	   <span id="time_allowed"><c:out value="${question.timeAllowed}"/> s</span>
-	</div>	
-	<tiles:insertAttribute name="questionKind"/>
+	   <span id="displayRemainingTime"><c:out value="${question.timeAllowed}"/> s</span>
+	</div>
    	<div class="pagination">
    		<ul>
-   			<c:set var="hasPreviousQuestion" value="${sitting.nextQuestionIndex -2 >= 0?'':'disabled'}"></c:set>
-	   		<li class="prev ${hasPreviousQuestion}">
-				<a id="${hasPreviousQuestion}previousQuestion" >Prev</a>	   		
-	   		</li>
-			<c:forEach items="${sitting.exam.questions}" var="questionIndex" varStatus="index">
-				<li class="${sitting.nextQuestionIndex == index.index + 1?'active':''}">
-					<a class="goToQuestion" id="goToQuestion_${questionIndex.guid}"> <c:out value="${index.index + 1}"/></a>
-				</li> 
-			</c:forEach>	
-			<li class="next">
-				<a id="nextQuestion" >
-					&nbsp;${sitting.nextQuestionIndex == fn:length(sitting.exam.questions) ? 'finish':'Next'}
-				</a>	   		
-	   		</li>   			
+
+
+
    		</ul>
    	</div>
 	<div id="errorMessage"></div>
@@ -133,29 +133,13 @@
                          $('#second-left').html(0);
                          $('#second-right').html(0);
 						 $(document).stopTime('displayRemainingTime');
+                         finishExam();
 					 }
-				 });	 
-				 //Server ping and Check Server Remaining Time.
-				 $(document).everyTime('5s',function(i) {
-					$.ajax({
-						type: "POST",
-						url: '<c:url value="progress"/>',
-						data: {remainingTime:totalTime,guid:'${sitting.guid}'},
-						success: function (data){
-							if(totalTime == 0){
-								$(document).stopTime('keepalive');					
-								submitResponse();								
-								nextQuestion();													
-							}
-						},
-						error: function (request, status, error){					
-							$("#examTime").html("The exam time has expired.");
-							$(document).stopTime('keepalive');
-							submitResponse();								
-							nextQuestion();													
-						}  
-					});
-				}, 0);
+				 });
+
+                $('finish').click(function() {
+                    finishExam();
+                });
 			}			 
 	});
 	//End - check progress functionality
@@ -171,6 +155,15 @@
 	var canContinue = function () {
 		submittedResponse = true;
 	}
+
+    function finishExam() {
+        submitResponse();
+        $.postGo('<c:url value="finish"/>',
+                {
+                    guid:'${sitting.guid}'
+                }
+        );
+    }
 
 	function submitResponse() {
 		var response = openapplicant.quiz.helper.recorder.getResponse();
@@ -199,7 +192,7 @@
 		previousQuestion();
 	});
 	
-	$('.goToQuestion').click( function() {
+	$('a[id^=goToQuestion]').click( function() {
 		openapplicant.quiz.helper.timer.destroy();		
 		submitResponse();
 		var qg = $(this).attr("id").split("_")[1];
