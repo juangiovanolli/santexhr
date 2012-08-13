@@ -264,7 +264,7 @@
 	</bean>
 	
 	<bean id="quizService" 
-		class="org.openapplicant.service.QuizService" parent="applicationService" />
+		class="org.openapplicant.service.QuizService" parent="applicationService"/>
 	
 	<bean id="reportService" 
 		class="org.openapplicant.service.ReportService" parent="applicationService" />
@@ -273,7 +273,10 @@
 		class="org.openapplicant.service.facilitator.FacilitatorService" parent="applicationService" />
 	
 	<bean id="sittingTimeManager" 
-		class="org.openapplicant.service.SittingTimeManager"/>
+		class="org.openapplicant.service.SittingTimeManager">
+        <property name="quizService" ref="quizService"/>
+    </bean>
+
 	<!--
 	==========================================================================
 						@Configurable objects

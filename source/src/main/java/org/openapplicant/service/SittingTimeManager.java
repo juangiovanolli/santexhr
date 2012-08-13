@@ -3,6 +3,7 @@ package org.openapplicant.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openapplicant.domain.Exam;
+import org.openapplicant.domain.Sitting;
 import org.openapplicant.domain.question.Question;
 import org.openapplicant.monitor.ExamTimeMonitor;
 import org.springframework.stereotype.Component;
@@ -17,17 +18,25 @@ public class SittingTimeManager {
 	private static final Log logger = LogFactory.getLog(SittingTimeManager.class);
 	
 	private final Map<String,ExamTimeMonitor> sittingExamTimeMonitorMap = new ConcurrentHashMap<String,ExamTimeMonitor>();
+    private QuizService quizService;
 	
 	public ExamTimeMonitor getExamTimeBySittingGuid(String sittingGuid){
 		return sittingExamTimeMonitorMap.get(sittingGuid);
 	}
 	
 	public void createExamTimeMonitorForSitting(String sittingGuid, long totalExamTime){
-		sittingExamTimeMonitorMap.put(sittingGuid, new ExamTimeMonitor(totalExamTime));
+		sittingExamTimeMonitorMap.put(sittingGuid, new ExamTimeMonitor(totalExamTime, sittingGuid, this));
 	}
 	
-	public void clearExamTimeMonitorBySitting(String sittingGuid){
-		sittingExamTimeMonitorMap.remove(sittingGuid);
+	public void clearExamTimeMonitorBySitting(String sittingGuid) {
+        Sitting sitting = quizService.findSittingByGuid(sittingGuid);
+        ExamTimeMonitor examTimeMonitor = sittingExamTimeMonitorMap.get(sittingGuid);
+        if (examTimeMonitor != null) {
+            logger.debug("********** stopCountDownTask");
+            examTimeMonitor.stopCountDownTask();
+        }
+        sittingExamTimeMonitorMap.remove(sittingGuid);
+        quizService.doSittingFinished(sitting);
 	}
 	
 	public boolean isExamMonitoring(String sittingGuid){
@@ -35,7 +44,7 @@ public class SittingTimeManager {
 	}
 
 	public void timerProcess(String sittingGuid, Exam exam){
-		logger.debug("timerProcess()");
+		logger.debug("********** timerProcess()");
 		
 		long totalExamTime = 0;
 		//Counter time on the server side.
@@ -50,7 +59,7 @@ public class SittingTimeManager {
 	}
 	
 	private long calculateTotalExamTime(Exam exam){	
-		logger.debug("calculateTotalExamTime()");
+		logger.debug("********** calculateTotalExamTime()");
 		List<Question> questionList= exam.getQuestions();
 		long totalExamTime = 0; 
 		
@@ -68,5 +77,13 @@ public class SittingTimeManager {
 		
 		return totalExamTime;
 	}
-	
+
+    public void notifyFinishedExamEvent(String guid) {
+        logger.debug("********** Notify Manager about event timer finished");
+        clearExamTimeMonitorBySitting(guid);
+    }
+
+    public void setQuizService(QuizService quizService) {
+        this.quizService = quizService;
+    }
 }

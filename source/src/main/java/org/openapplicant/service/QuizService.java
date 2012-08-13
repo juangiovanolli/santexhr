@@ -162,11 +162,14 @@ public class QuizService extends ApplicationService {
 	 * @param sitting the sitting
 	 */
 	public void doSittingFinished(Sitting sitting) {
-        sitting.setStatus(Sitting.Status.FINISHED);
-        sitting.getCandidate().setStatus(Candidate.Status.READY_FOR_GRADING);
-        getCandidateDao().save(sitting.getCandidate());
-        getCandidateWorkFlowEventDao().save(new SittingCompletedEvent(sitting));
-    	getSittingDao().save(sitting);		
+        if (sitting.getStatus().equals(Sitting.Status.STARTED)) {
+            log.debug("********** Changing Sitting and Candidate status");
+            sitting.setStatus(Sitting.Status.FINISHED);
+            sitting.getCandidate().setStatus(Candidate.Status.READY_FOR_GRADING);
+            getCandidateDao().save(sitting.getCandidate());
+            getCandidateWorkFlowEventDao().save(new SittingCompletedEvent(sitting));
+            getSittingDao().save(sitting);
+        }
 	}
 	
 
@@ -203,9 +206,14 @@ public class QuizService extends ApplicationService {
 	 * @return the saved response.
 	 */
 	public Response submitResponse(String sittingGuid, String questionGuid, Response response) {
-		Sitting sitting = getSittingDao().findByGuid(sittingGuid);
-		sitting.assignResponse(questionGuid, response);
-		getSittingDao().save(sitting);
-		return getResponseDao().save(response);
-	}
+        log.debug("Client submit response: " + response.getContent());
+        Sitting sitting = getSittingDao().findByGuid(sittingGuid);
+        if (!sitting.isFinished()) {
+            log.debug("Client submit response... assigned");
+            sitting.assignResponse(questionGuid, response);
+            getSittingDao().save(sitting);
+            return getResponseDao().save(response);
+        }
+        return null;
+    }
 }

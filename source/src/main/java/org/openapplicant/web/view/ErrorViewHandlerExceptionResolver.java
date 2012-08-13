@@ -17,10 +17,10 @@ public class ErrorViewHandlerExceptionResolver implements HandlerExceptionResolv
 			HttpServletResponse response, Object handler, Exception ex) {
 		String servletPath = request.getServletPath();
         log.error(ex);
-        if (!servletPath.startsWith("quiz")) {
+        if (!servletPath.startsWith("/quiz")) {
             return new ModelAndView("error/index");
         } else {
-            return new ModelAndView("quiz/index").addObject("error", "There seems to be a problem with our servers.  Please try again later.");
+            return new ModelAndView("quiz/sorry").addObject("error", "There seems to be a problem with our servers.  Please try again later.");
         }
 	}
 }
