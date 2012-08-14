@@ -36,10 +36,10 @@
                     <ul id="nav-numbers">
                         <c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponseIndex" varStatus="index">
                             <li<c:if test="${questionAndResponseIndex.question eq question}"> class='current-nav'</c:if>>
-                                <a href="#" id="goToQuestion_${questionAndResponseIndex.question.guid}"<c:if test="${!(questionAndResponseIndex.response eq null) && not empty questionAndResponseIndex.response.content}">class="i-was-there"</c:if>><c:out value="${index.index + 1}"/></a></li>
+                                <a href="#" id="goToQuestion_${questionAndResponseIndex.question.guid}"<c:if test="${!(questionAndResponseIndex.response eq null) && ((not empty questionAndResponseIndex.response.content) || (questionAndResponseIndex.response.dontKnowTheAnswer == true))}"> class="i-was-there"</c:if>><c:out value="${index.index + 1}"/></a></li>
                         </c:forEach>
                         <li id="of-total">of</li>
-                        <li><a><c:out value="${fn:length(sitting.questionsAndResponses)}"/></a></li>
+                        <li><a href="#"><c:out value="${fn:length(sitting.questionsAndResponses)}"/></a></li>
                     </ul>
                     <c:if test="${sitting.nextQuestionIndex != fn:length(sitting.exam.questions)}">
                     <li id="arrow-right"><a href="#"><span>Right</span></a></li>
@@ -114,11 +114,15 @@
                          $('#second-left').html(0);
                          $('#second-right').html(0);
 						 $(document).stopTime('displayRemainingTime');
+                         openapplicant.quiz.helper.timer.destroy();
+                         submitResponse();
                          finishExam();
 					 }
 				 });
 
                 $('#finish').click(function() {
+                    openapplicant.quiz.helper.timer.destroy();
+                    submitResponse();
                     finishExam();
                 });
 			}			 
@@ -138,12 +142,14 @@
 	}
 
     function finishExam() {
-        submitResponse();
-        $.postGo('<c:url value="finish"/>',
+        if(!submittedResponse) { setTimeout("finishExam()", 10); }
+        else {
+            $.postGo('<c:url value="finish"/>',
                 {
                     guid:'${sitting.guid}'
                 }
-        );
+            );
+        }
     }
 
 	function submitResponse() {
@@ -160,23 +166,34 @@
 		if(!submittedResponse) { setTimeout("previousQuestion()", 10); }
 		else { window.location = "<c:url value='/quiz/prevQuestion?s=${sitting.guid}'/>"; }
 	}
+
+    function goToQuestion(qg) {
+        if(!submittedResponse) { setTimeout(function(){goToQuestion(qg);}, 10); }
+        else { $(location).attr('href',"<c:url value='/quiz/goToQuestion'/>?s=${sitting.guid}&qg=" + qg); }
+    }
 	
-	$('#nextQuestion').click( function() {
-		openapplicant.quiz.helper.timer.destroy();		
-		submitResponse();
-		nextQuestion();
-	});
+	$('#nextQuestion,#arrow-right').each(function() {
+        $(this).click( function() {
+            openapplicant.quiz.helper.timer.destroy();
+            submitResponse();
+            nextQuestion();
+        });
+    });
 	
-	$('#previousQuestion').click( function() {
-		openapplicant.quiz.helper.timer.destroy();		
-		submitResponse();
-		previousQuestion();
-	});
+	$('#previousQuestion,#arrow-left').each(function() {
+        $(this).click( function() {
+            openapplicant.quiz.helper.timer.destroy();
+            submitResponse();
+            previousQuestion();
+        });
+    });
 	
 	$('a[id^=goToQuestion]').click( function() {
 		openapplicant.quiz.helper.timer.destroy();		
 		submitResponse();
 		var qg = $(this).attr("id").split("_")[1];
-		$(location).attr('href',"<c:url value='/quiz/goToQuestion'/>?s=${sitting.guid}&qg=" + qg);
+		goToQuestion(qg)
 	});
+
+
 </script>

@@ -1,5 +1,6 @@
 package org.openapplicant.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openapplicant.domain.*;
@@ -206,7 +207,7 @@ public class QuizService extends ApplicationService {
 	 * @return the saved response.
 	 */
 	public Response submitResponse(String sittingGuid, String questionGuid, Response response) {
-        log.debug("Client submit response: " + response.getContent());
+        log.debug("Client submit response: " + (StringUtils.isBlank(response.getContent()) ? (response.isDontKnowTheAnswer() ? "dontKnow" : "nothing") : response.getContent()));
         Sitting sitting = getSittingDao().findByGuid(sittingGuid);
         if (!sitting.isFinished()) {
             log.debug("Client submit response... assigned");

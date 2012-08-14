@@ -21,11 +21,17 @@
 <c:forEach var="choice" items="${questionViewHelper.choices}" varStatus="row">
     <li>
         <label>
-            <input type="radio"<c:if test="${choice eq response}">checked=""</c:if> class="radio" name="answerIndex" value="${row.index}">
+            <input type="radio"<c:if test="${choice eq response}"> checked=""</c:if> class="radio" name="answerIndex" value="${row.index}">
             <strong><c:out value="${choice}"/></strong>
         </label>
     </li>
 </c:forEach>
+    <li>
+        <label>
+            <input id="dontKnowTheAnswer" type="radio" class="radio" name="answerIndex" value="true"<c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse"><c:if test="${(question eq questionAndResponse.question) && !(questionAndResponse.response eq null) && (questionAndResponse.response.dontKnowTheAnswer == true)}"> checked=""</c:if></c:forEach>>
+            <strong>No se la respuesta</strong>
+        </label>
+    </li>
 </ul>
 
 <div style="display:none">
@@ -39,12 +45,21 @@
 		var self = this;
 		var choice = $.trim($('label', this).text());
 		var radio = $('input:radio', this)[0];
-		function multipleChoiceChange() {
-			$('#response').val(choice);
-			openapplicant.quiz.helper.recorder.keypressNoPaste();
-		};
-		$(radio).change(multipleChoiceChange);
-	});
+        if (radio.id == 'dontKnowTheAnswer') {
+            function dontKnowTheAnswerChange() {
+                $('#response').val('');
+                $('input:radio', self).attr("checked", true);
+                openapplicant.quiz.helper.recorder.keypressNoPaste();
+            }
+            $(radio).change(dontKnowTheAnswerChange);
+        } else {
+            function multipleChoiceChange() {
+                $('#response').val(choice);
+                openapplicant.quiz.helper.recorder.keypressNoPaste();
+            };
+            $(radio).change(multipleChoiceChange);
+        }
+    });
 	
-	openapplicant.quiz.helper.recorder.init('#response');
+	openapplicant.quiz.helper.recorder.init('#response', '#dontKnowTheAnswer');
 </script>

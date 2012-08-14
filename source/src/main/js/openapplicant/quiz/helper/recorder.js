@@ -9,6 +9,7 @@ var loadTimestamp;
 
 
 var textarea; //content = textarea.val()
+var dontKnowTheAnswerRadio; //dontKnowTheAnswer = dontKnowTheAnswerRadio.attr("checked")
 
 // stored as JSON strings
 // [{ t: text/type OR d: diff, m: milliseconds}]
@@ -36,12 +37,19 @@ var self = openapplicant.quiz.helper.recorder = {
 	/**
 	 * @param el the html textarea
 	 */
-	init: function(el) {
+	init: function(el, el2) {
 	
 		loadTimestamp = new Date().getTime();
 		hasFocus = true;
 				
 		textarea = $(el);
+        dontKnowTheAnswerRadio = $(el2);
+
+        dontKnowTheAnswerRadio.click(function validateDontKnowTheAnswerState() {
+            if (textarea.val().length > 0) {
+                $(this).attr("checked", false);
+            }
+        });
 		
 		keypressEvents = [];
 		focusEvents = [];
@@ -177,7 +185,8 @@ var self = openapplicant.quiz.helper.recorder = {
 			lineCount:		lineCount,
 			linesPerHour:	linesPerHour,
 			browserType:	browserType,
-			browserVersion: browserVersion
+			browserVersion: browserVersion,
+            dontKnowTheAnswer:dontKnowTheAnswerRadio.attr("checked")
 		};
       
     },
@@ -238,6 +247,10 @@ var self = openapplicant.quiz.helper.recorder = {
 		var currentLength = textarea.val().length;
 		var diff = currentLength - keyChars;
 		keyChars = currentLength;
+
+        if (currentLength > 0 && dontKnowTheAnswerRadio.attr("checked") == true) {
+            dontKnowTheAnswerRadio.attr("checked", false);
+        }
 		
 		if(diff > 0 && diff <= 3) {
 			keyPresses++;	

@@ -1,16 +1,10 @@
 package org.openapplicant.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.Min;
 import org.hibernate.validator.NotNull;
+
+import javax.persistence.*;
 
 @Entity
 public class Response extends DomainObject {
@@ -22,6 +16,8 @@ public class Response extends DomainObject {
 	private String keypressEvents = "";
 	private String focusEvents = "";
 	private String pasteEvents = "";
+
+    private boolean dontKnowTheAnswer = false;
 	
 	private final ResponseMeasurements measurements = new ResponseMeasurements();
 	
@@ -292,4 +288,12 @@ public class Response extends DomainObject {
 	public void setBrowserVersion(String browserVersion) {
 	    this.browserVersion = browserVersion;
 	}
+
+    @Column(nullable=false)
+    public boolean isDontKnowTheAnswer() {
+        return dontKnowTheAnswer;
+    }
+    public void setDontKnowTheAnswer(boolean dontKnowTheAnswer) {
+        this.dontKnowTheAnswer = dontKnowTheAnswer;
+    }
 }

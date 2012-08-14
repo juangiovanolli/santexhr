@@ -19,17 +19,19 @@
           onBlur="this.className='textarea-large textarea-noCurrent'"><c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse"><c:if test="${question eq questionAndResponse.question}">${questionAndResponse.response.content}</c:if></c:forEach></textarea>
 
 <ul class="input-radio input-radio-single">
-    <li>
-        <label>
-            <input type="radio" id="radio01" class="radio" name="radio01" value="">
-            <strong>No se la respuesta</strong>
-        </label>
-    </li>
+    <ul class="input-radio input-radio-single">
+        <li>
+            <label>
+                <input id="dontKnowTheAnswer" type="radio" class="radio" name="dontKnowTheAnswer" value="true"<c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse"><c:if test="${(question eq questionAndResponse.question) && !(questionAndResponse.response eq null) && ((not empty questionAndResponse.response.content) || (questionAndResponse.response.dontKnowTheAnswer == true))}"> checked=""</c:if></c:forEach>>
+                <strong>No se la respuesta</strong>
+            </label>
+        </li>
+    </ul>
 </ul>
 
 <script type="text/javascript">
     oltk.include('openapplicant/quiz/helper/recorder.js');
-    openapplicant.quiz.helper.recorder.init('#response');
+    openapplicant.quiz.helper.recorder.init('#response', '#dontKnowTheAnswer');
 
     oltk.include('openapplicant/quiz/helper/tab.js');
     openapplicant.quiz.helper.tab.init('#response');
