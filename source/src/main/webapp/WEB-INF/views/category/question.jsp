@@ -61,6 +61,12 @@
 					<textarea name="prompt" id="prompt" class="required"><c:out value="${question.prompt}"/></textarea>
 				</div>
 			</li>
+            <li>
+                <label>Prompt Content:</label>
+                <div>
+                    <textarea name="promptContent" id="promptContent"><c:out value="${question.promptContent}"/></textarea>
+                </div>
+            </li>
 			<li>
 				<tiles:insertAttribute name="questionKind"/>
 			</li>

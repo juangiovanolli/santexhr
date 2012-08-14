@@ -36,8 +36,7 @@
                     <ul id="nav-numbers">
                         <c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponseIndex" varStatus="index">
                             <li<c:if test="${questionAndResponseIndex.question eq question}"> class='current-nav'</c:if>>
-                                <a id="goToQuestion_${questionAndResponseIndex.question.guid}"
-                                   <c:if test="${!(questionAndResponseIndex.response eq null) && !(questionAndResponseIndex.response.content eq null)}">class="i-was-there"</c:if>><c:out value="${index.index + 1}"/></a></li>
+                                <a href="#" id="goToQuestion_${questionAndResponseIndex.question.guid}"<c:if test="${!(questionAndResponseIndex.response eq null) && not empty questionAndResponseIndex.response.content}">class="i-was-there"</c:if>><c:out value="${index.index + 1}"/></a></li>
                         </c:forEach>
                         <li id="of-total">of</li>
                         <li><a><c:out value="${fn:length(sitting.questionsAndResponses)}"/></a></li>
@@ -50,7 +49,7 @@
 
             </div>
             <!-- /nav control -->
-
+            <c:if test="${!(question.timeAllowed eq null) && question.timeAllowed > 0}">
             <!-- ligths -->
             <div id="ligths-wrap">
 
@@ -65,19 +64,18 @@
 
             </div>
             <!-- /ligths -->
+            </c:if>
 
             <!-- questions  -->
             <div id="questions">
                 <tiles:insertAttribute name="questionKind"/>
+                <div id="errorMessage"></div>
+                <c:if test="${sitting.nextQuestionIndex != fn:length(sitting.exam.questions)}">
+                    <p class="next-button"><a href="#" id="nextQuestion" name="Continue">Continue</a></p>
+                </c:if>
+                <p class="next-button"><a href="#" id="finish" name="Finish Exam">Finish</a></p>
             </div>
             <!-- /questions  -->
-
-            <c:if test="${sitting.nextQuestionIndex != fn:length(sitting.exam.questions)}">
-                <p class="next-button"><a id="nextQuestion" name="Continue">Continue</a></p>
-            </c:if>
-            <li class="next">
-                <p class="next-button"><a id="finish" name="Finish Exam">Finish</a></p>
-            </li>
 
         </div>
         <!-- /wide -->
@@ -88,29 +86,12 @@
 </section>
 <!-- /section -->
 
-<form id="openapplicant_question_form" class="openapplicant_quiz_question">
-
-	<input type="hidden" id="remainingTime" value="${remainingTime}"/>
-	<div class="row">	   
-	   <span id="name"><c:out value="${sitting.exam.name}"/>
-	   <c:out value="${sitting.nextQuestionIndex}"/> of <c:out value="${fn:length(sitting.exam.questions)}"/></span>   
-	   <span id="displayRemainingTime"><c:out value="${question.timeAllowed}"/> s</span>
-	</div>
-   	<div class="pagination">
-   		<ul>
-
-
-
-   		</ul>
-   	</div>
-	<div id="errorMessage"></div>
-</form>
 <script type="text/javascript">	
 	//Begin - check progress functionality
 	oltk.include('jquery/time/jquery.timers-1.2.js');
 	oltk.include('jquery/jquery.js');
 	$(document).ready(function(){
-		    var totalTime = $("#remainingTime").val();		  
+		    var totalTime = ${remainingTime};
 			if(totalTime != ""){
 				 //Display Total Exam time - CountDown.	
 				 $(document).everyTime('1s',function(i) {
@@ -137,7 +118,7 @@
 					 }
 				 });
 
-                $('finish').click(function() {
+                $('#finish').click(function() {
                     finishExam();
                 });
 			}			 

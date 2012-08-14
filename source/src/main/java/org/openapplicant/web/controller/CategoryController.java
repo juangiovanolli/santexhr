@@ -170,6 +170,7 @@ public class CategoryController extends AdminController {
 			@RequestParam("timeAllowed") Integer timeAllowed,
 			@RequestParam("name") String name,
 			@RequestParam("prompt") String prompt,
+            @RequestParam("promptContent") String promptContent,
 			@RequestParam("answer") String answer,
             @RequestParam(required = false, value = "n") Boolean isNew,
             @RequestParam(required = false, value = "save") String save,
@@ -188,6 +189,7 @@ public class CategoryController extends AdminController {
 		essayQuestion.setTimeAllowed(timeAllowed);
 		essayQuestion.setName(name);
 		essayQuestion.setPrompt(prompt);
+        essayQuestion.setPromptContent(promptContent);
 		essayQuestion.setAnswer(answer);
 
         if (categoryId != null) {
@@ -217,6 +219,7 @@ public class CategoryController extends AdminController {
 			@RequestParam("timeAllowed") Integer timeAllowed,
 			@RequestParam("name") String name,
 			@RequestParam("prompt") String prompt,
+            @RequestParam("promptContent") String promptContent,
 			@RequestParam("answer") String answer,
             @RequestParam(required = false, value = "n") Boolean isNew,
             @RequestParam(required = false, value = "save") String save,
@@ -235,6 +238,7 @@ public class CategoryController extends AdminController {
 		codeQuestion.setTimeAllowed(timeAllowed);
 		codeQuestion.setName(name);
 		codeQuestion.setPrompt(prompt);
+        codeQuestion.setPromptContent(promptContent);
 		codeQuestion.setAnswer(answer);
 
         if (categoryId != null) {
@@ -265,6 +269,7 @@ public class CategoryController extends AdminController {
 			@RequestParam("timeAllowed") Integer timeAllowed,
 			@RequestParam("name") String name,
 			@RequestParam("prompt") String prompt,
+            @RequestParam("promptContent") String promptContent,
 			@RequestParam(value="answerIndex", required=false) Integer answerIndex,
 			@RequestParam("choices") List<String> choices,
             @RequestParam(required = false, value = "n") Boolean isNew,
@@ -284,6 +289,7 @@ public class CategoryController extends AdminController {
 		multipleChoiceQuestion.setTimeAllowed(timeAllowed);
 		multipleChoiceQuestion.setName(name);
 		multipleChoiceQuestion.setPrompt(prompt);
+        multipleChoiceQuestion.setPromptContent(promptContent);
 		multipleChoiceQuestion.setAnswerIndex(answerIndex);
 		multipleChoiceQuestion.setChoicesText(choices);
 

@@ -24,6 +24,8 @@ public abstract class Question extends DomainObject implements IFreezable {
 	private String name = "Untitled";
 	
 	private String prompt = "New Question";
+
+    private String promptContent = "";
 	
 	private String artifactId = UUID.randomUUID().toString();
 	
@@ -71,6 +73,19 @@ public abstract class Question extends DomainObject implements IFreezable {
 	public void setPrompt(String prompt) {
 		this.prompt = StringUtils.trimToEmpty(prompt);
 	}
+
+    /**
+     * @return this question's prompt
+     */
+    @Column(columnDefinition="longtext")
+    public String getPromptContent() {
+        return promptContent;
+    }
+
+    @AssertNotFrozen
+    public void setPromptContent(String promptContent) {
+        this.promptContent = StringUtils.trimToEmpty(promptContent);
+    }
 	
 	/**
 	 * @return the time allowed for this question in seconds.
@@ -200,6 +215,7 @@ public abstract class Question extends DomainObject implements IFreezable {
 	@AssertNotFrozen
 	public void merge(Question other) {
 		setPrompt(other.getPrompt());
+        setPromptContent(other.getPromptContent());
 		setTimeAllowed(other.getTimeAllowed());
 		setName(other.getName());
 		setCategory(other.getCategory());

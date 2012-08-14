@@ -8,18 +8,24 @@
 		}
 </style>
 
-<div class="row righty">
-	<pre id="prompt">${question.prompt}</pre>
-</div>
-<ul id="answerChoices" class="multiple_choice">
-	<c:forEach var="choice" items="${questionViewHelper.choices}" varStatus="row">
-	<li>
-		<label>
-			<input type="radio" class="radio" name="answerIndex" value="${row.index}"/>
-			<c:out value="${choice}"/>
-		</label>
-	</li>
-	</c:forEach>
+<h3 class="question-title">${question.prompt}</h3>
+<c:if test="${not empty question.promptContent}">
+    <!-- code -->
+    <code id="code">
+        <textarea disabled="disabled">${question.promptContent}</textarea>
+    </code>
+    <!-- code -->
+</c:if>
+<ul id="answerChoices" class="input-radio">
+<c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse"><c:if test="${question eq questionAndResponse.question}"><c:set var="response" value="${questionAndResponse.response.content}"/></c:if></c:forEach>
+<c:forEach var="choice" items="${questionViewHelper.choices}" varStatus="row">
+    <li>
+        <label>
+            <input type="radio"<c:if test="${choice eq response}">checked=""</c:if> class="radio" name="answerIndex" value="${row.index}">
+            <strong><c:out value="${choice}"/></strong>
+        </label>
+    </li>
+</c:forEach>
 </ul>
 
 <div style="display:none">
