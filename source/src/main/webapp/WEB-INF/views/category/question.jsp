@@ -70,7 +70,14 @@
 			<li>
 				<tiles:insertAttribute name="questionKind"/>
 			</li>
-			<!-- HERE IS WHERE SHOULD BE LOCATED THE FIELD 'Time Allowed', WHICH INDICATES THE LIMIT TIME TO ANSWER THIS QUESTION -->
+			<li>
+				<label>Time allowed:</label>
+				<div>
+					<input type="text" id="timeAllowed" name="timeAllowed" value="<c:out value='${question.timeAllowed}'/>" class="half number"/>
+					<br/>
+					<span>(seconds, blank is untimed)</span>
+				</div>
+			</li>
 			<security:authorize ifNotGranted="<%=ROLE_HR.name()%>">
 			<li class="actions">
 				<input type="submit" class="submit" name="save" value="Save"/>

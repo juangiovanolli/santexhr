@@ -55,11 +55,11 @@
 
                 <p>Four yellow ligths to finish this question</p>
 
-                <ul>
-                    <li class="current-ligth"><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
-                    <li><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
-                    <li><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
-                    <li><img src="<c:url value='/img/quiz/ligth-yellow.png'/>" name="Ligth" alt="Ligth"></li>
+                <ul id="ligths-section">
+                    <div id="semaphore_container">
+                        <div id="semaphore"></div>
+                        <div id="semaphore_off"></div>
+                    </div>
                 </ul>
 
             </div>
@@ -125,7 +125,32 @@
                     submitResponse();
                     finishExam();
                 });
-			}			 
+			}
+
+        <c:if test="${!(question.timeAllowed eq null) && question.timeAllowed > 0}">
+        var questionTime = ${question.timeAllowed * 1000};
+        var numberOfLights = 5;
+        var timePerLight = questionTime / numberOfLights;
+        var section = $('#semaphore');
+        for (i = 0; i < numberOfLights; i++) {
+            section.html(section.html() + '<div id="light' + i + '"><img src="<c:url value="/img/quiz/light-yellow.png"/>"/></div>');
+        }
+        var section = $('#semaphore_off');
+        for (i = 0; i < numberOfLights; i++) {
+            section.html(section.html() + '<div id="light_off' + i + '"><img src="<c:url value="/img/quiz/light-off.png"/>"/></div>');
+        }
+        var off = function(i) {
+            $('#light_off' + i).fadeTo(timePerLight, 0, function() {
+                if (i < (numberOfLights - 1)) {
+                    off(i + 1);
+                } else {
+                    submitResponse();
+                    goToQuestion('${question.guid}');
+                }
+            });
+        }
+        off(0);
+        </c:if>
 	});
 	//End - check progress functionality
 	

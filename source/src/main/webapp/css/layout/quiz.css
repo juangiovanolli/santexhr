@@ -571,23 +571,33 @@ button.go-button span {
 	display:block;
 	float:left;
 	margin:2px 0 0;
+    width: 190px;
+    list-style:none;
 }
 
-#ligths-wrap ul, #ligths-wrap ul li {
-	list-style:none;
+#ligths-wrap ul #semaphore_container {
+    position: relative;
 }
 
-#ligths-wrap ul li {
-	width:24px;
-	height:24px;
-	display:block;
-	background:url(../../img/quiz/ligth-off.png) no-repeat top;
-	float:left;
-	margin:0 12px;
+#ligths-wrap ul #semaphore_container > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
-#ligths-wrap ul li.current-ligth {
-	background-position:bottom;
+#ligths-wrap ul #semaphore_container #semaphore {
+    z-index: 0;
+}
+
+#ligths-wrap ul #semaphore_container #semaphore_off {
+    z-index: 1;
+}
+
+#ligths-wrap ul #semaphore_container * div {
+    float: left;
+    margin-left: 12px;
 }
 
 #questions {
