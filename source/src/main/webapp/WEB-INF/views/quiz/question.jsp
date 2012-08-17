@@ -162,7 +162,8 @@
         </c:if>
         </c:if>
         <c:if test="${fn:length(sitting.questionsAndResponses) > 8}">
-        $('#nav-numbers').hoverscroll({
+        var elementNumbers = $('#nav-numbers');
+        elementNumbers.hoverscroll({
                     vertical: false,	// Display the list vertically or horizontally
 
                     width:    400,		// Width of the list container
@@ -177,24 +178,24 @@
                     debug:    false     // Debug output in the firebug console
                 }
         );
-        // Set the initial position
-        var totalWidth = $('.listcontainer').width();
-        var maxScrollLeft = $('#nav-numbers').width() - $('.listcontainer').width();
         <c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse" varStatus="status">
             <c:if test="${questionAndResponse.question eq question}">
                 <c:set var="index" value="${status.index}"/>
             </c:if>
         </c:forEach>
-        var linkInsideItemElement = $('.item a')[0];
-        var elementLength = linkInsideItemElement.offsetWidth + 2 * linkInsideItemElement.offsetLeft;
+        // Set the initial position
+        var listContainerElement = $('.listcontainer');
+        var linkInsideItemElement = $('.item');
+        var elementLength = linkInsideItemElement.width() + parseInt(linkInsideItemElement.css('padding-left')) + parseInt(linkInsideItemElement.css('padding-right'))
+                + parseInt(linkInsideItemElement.css('margin-left')) + parseInt(linkInsideItemElement.css('margin-right'));
         var firstElement = 5;
         var lastElement = ${fn:length(sitting.questionsAndResponses)} - firstElement;
         if (${index} > lastElement) {
-            $('.listcontainer').scrollLeft(maxScrollLeft);
+            listContainerElement.animate({scrollLeft: (elementLength * lastElement - listContainerElement.width() / 2 + elementLength / 2)}, 1000);
         } else if (${index} < firstElement) {
-            $('.listcontainer').scrollLeft(0);
-        } else {
-            $('.listcontainer').scrollLeft(elementLength * ${index} - $('.listcontainer').width() / 2 + elementLength / 2);
+            listContainerElement.animate({scrollLeft: 0}, 1000);
+            } else {
+            listContainerElement.animate({scrollLeft: (elementLength * ${index} - listContainerElement.width() / 2 + elementLength / 2)}, 1000);
         }
         </c:if>
 	});
