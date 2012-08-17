@@ -21,14 +21,14 @@
 <c:forEach var="choice" items="${questionViewHelper.choices}" varStatus="row">
     <li>
         <label>
-            <input type="radio"<c:if test="${choice eq response}"> checked=""</c:if> class="radio" name="answerIndex" value="${row.index}">
+            <input type="radio"<c:if test="${choice eq response}"> checked=""</c:if> class="radio" name="answerIndex" value="${row.index}"<c:if test="${disableInputOnTimedQuestions}"> disabled="disabled"</c:if>>
             <strong><c:out value="${choice}"/></strong>
         </label>
     </li>
 </c:forEach>
     <li>
         <label>
-            <input id="dontKnowTheAnswer" type="radio" class="radio" name="answerIndex" value="true"<c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse"><c:if test="${(question eq questionAndResponse.question) && !(questionAndResponse.response eq null) && (questionAndResponse.response.dontKnowTheAnswer == true)}"> checked=""</c:if></c:forEach>>
+            <input id="dontKnowTheAnswer" type="radio" class="radio" name="answerIndex" value="true"<c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse"><c:if test="${(question eq questionAndResponse.question) && !(questionAndResponse.response eq null) && (questionAndResponse.response.dontKnowTheAnswer == true)}"> checked=""</c:if></c:forEach><c:if test="${disableInputOnTimedQuestions}"> disabled="disabled"</c:if>>
             <strong>No se la respuesta</strong>
         </label>
     </li>

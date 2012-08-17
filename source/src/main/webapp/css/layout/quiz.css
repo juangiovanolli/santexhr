@@ -94,7 +94,7 @@ img {
 	height:100%;
 }
 
-.aling-center {
+.align-center {
 	text-align:center;
 }
 
@@ -456,12 +456,14 @@ button.go-button span {
 	margin:0 15px 0 0;
 }
 
-#nav-control ul, #nav-control li {
+#nav-control ul, #nav-control li, #nav-control div {
 	display:inline-block;
 }
 
 #nav-control li {
 	margin:0 3px;
+    display: block;
+    float: left;
 }
 
 #nav-control #nav-arrows li a {
@@ -494,7 +496,10 @@ button.go-button span {
 	display:none;
 }
 
-#nav-control #nav-numbers li a:link, #nav-control #nav-numbers li a:visited {
+#nav-control #nav-numbers li a:link,
+#nav-control #nav-numbers li a:visited,
+#nav-control #nav-arrows li#total a:link,
+#nav-control #nav-arrows li#total a:visited{
 	font-size:20px;
 	color:#828782;
 	font-family: 'Oswald', sans-serif;
@@ -515,7 +520,9 @@ button.go-button span {
 	transition:0.3s ease-in-out;
 }
 
-#nav-control #nav-numbers li a:hover, #nav-control #nav-numbers li.current-nav a {
+#nav-control #nav-numbers li a:hover,
+#nav-control #nav-numbers li.current-nav a,
+#nav-control #nav-arrows li#total a:hover {
 	background:#46d877;
 	color:#ffffff;
 	
@@ -540,14 +547,15 @@ button.go-button span {
 	transition:0.3s ease-in-out;
 }
 
-#nav-control #nav-numbers li#of-total {
+#nav-control li#of-total {
 	font-weight:bold;
 	font-size:24px;
 	color:#838782;
 	font-family:'Abel', sans-serif;
+    margin-top: 6px;
 }
 
-#ligths-wrap {
+#lights-wrap {
 	clear:both;
 	background:#f8f8f8;
 	border:2px solid #e8e9ea;
@@ -557,7 +565,7 @@ button.go-button span {
 	display: table;
 }
 
-#ligths-wrap p {
+#lights-wrap p {
 	font-family:'Abel', sans-serif;
 	font-size:16px;
 	color:#838782;
@@ -567,7 +575,7 @@ button.go-button span {
 	float:left;
 }
 
-#ligths-wrap ul {
+#lights-wrap ul {
 	display:block;
 	float:left;
 	margin:2px 0 0;
@@ -575,11 +583,11 @@ button.go-button span {
     list-style:none;
 }
 
-#ligths-wrap ul #semaphore_container {
+#lights-wrap ul #semaphore_container {
     position: relative;
 }
 
-#ligths-wrap ul #semaphore_container > div {
+#lights-wrap ul #semaphore_container > div {
     position: absolute;
     top: 0;
     left: 0;
@@ -587,15 +595,15 @@ button.go-button span {
     height: 100%;
 }
 
-#ligths-wrap ul #semaphore_container #semaphore {
+#lights-wrap ul #semaphore_container #semaphore {
     z-index: 0;
 }
 
-#ligths-wrap ul #semaphore_container #semaphore_off {
+#lights-wrap ul #semaphore_container #semaphore_off {
     z-index: 1;
 }
 
-#ligths-wrap ul #semaphore_container * div {
+#lights-wrap ul #semaphore_container * div {
     float: left;
     margin-left: 12px;
 }

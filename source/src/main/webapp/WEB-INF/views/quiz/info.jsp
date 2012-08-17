@@ -9,7 +9,7 @@
     <article>
 
         <!-- wide -->
-        <div class="wide aling-center">
+        <div class="wide align-center">
 
             <h2>Please complete your info:</h2>
 

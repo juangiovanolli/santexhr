@@ -16,8 +16,8 @@
         <div class="right">
             <p>The following exam will present you with a series of questions designed to measure your problem solving abilities.</p>
 
-            <p>Not all of the questions are timed, but that does not mean you can google around for the answers. Be sure to watch the YELLOW time ligths in the TOP.
-                When all ligths are in yellow your time for this question is off.</p>
+            <p>Not all of the questions are timed, but that does not mean you can google around for the answers. Be sure to watch out the YELLOW time lights in the TOP.
+                When all lights are in yellow your time for that question is off.</p>
 
             <img src="<c:url value='/img/quiz/tutorial-img-01.png'/>" alt="Example" name="Example" id="img-example-01" class="img-resize">
 

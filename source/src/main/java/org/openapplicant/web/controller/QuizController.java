@@ -61,16 +61,6 @@ public class QuizController {
         }
     }
 
-    @RequestMapping(method=GET)
-    public String index3(	@RequestParam(value="exam", required=false) String guid,
-                             Map<String,Object> model) {
-        if (doIndex(guid, model)) {
-            return "quiz/index3";
-        } else {
-            return "quiz/sorry";
-        }
-    }
-
     /**
      *
      * @return true if there were no errors, false if there were

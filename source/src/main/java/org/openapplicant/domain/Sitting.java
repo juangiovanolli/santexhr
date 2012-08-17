@@ -114,8 +114,13 @@ public class Sitting extends DomainObject {
 	 */
 	public void assignResponse(String questionGuid, Response response) {
 		Assert.notNull(response);
-		
+
 		QuestionAndResponse qar = findQuestionAndResponseByQuestionGuid(questionGuid);
+        if (qar.getQuestion().getTimeAllowed() != null && qar.getQuestion().getTimeAllowed() > 0) {
+            if (qar.getResponse() != null && qar.getResponse().getLoadTimestamp() != 0) {
+                return;
+            }
+        }
 		responseSummary.addResponse(response);
 		qar.setResponse(response); 
 	}
