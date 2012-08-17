@@ -100,44 +100,10 @@ public class QuizController {
             return "quiz/sorry";
         }
 
-        return "redirect:question?s="+sitting.getGuid();
+        sittingTimeManager.timerProcess(sitting.getGuid(), sitting.getExam());
+
+        return "redirect:goToQuestion?s="+sitting.getGuid()+"&qg="+sitting.getNextQuestion().getGuid();
 	}
-
-    @RequestMapping(method = GET)
-    public String question(@RequestParam(value = "s") String guid,
-                           Map<String, Object> model) {
-        logger.info("Question: building question");
-        Sitting sitting = quizService.findSittingByGuid(guid);
-        String sittingGuid = sitting.getGuid();
-
-        model.put("sitting", sitting);
-        String redirect;
-        logger.debug("********** Question Client Request");
-        if (!sitting.isFinished()) {
-            Question question;
-            if (sitting.hasNextQuestion()) {
-                question = quizService.nextQuestion(sitting);
-            } else {
-                question = sitting.getCurrentQuestion();
-            }
-
-            sittingTimeManager.timerProcess(sittingGuid, sitting.getExam());
-
-            model.put("question", question);
-            model.put("questionViewHelper", new MultipleChoiceHelper(question));
-
-            if (sittingTimeManager.isExamMonitoring(sittingGuid)) {
-                model.put("isExamInTime", "true");
-                model.put("remainingTime", sittingTimeManager.getExamTimeBySittingGuid(sittingGuid).getSeconds());
-            }
-            redirect = new QuizQuestionViewVisitor(question).getView();
-        } else {
-            model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
-            redirect = QUIZ_THANKS_VIEW;
-        }
-
-        return redirect;
-    }
 	
 	@RequestMapping(method=GET)
 	public String goToQuestion(	@RequestParam(value="s") String guid,@RequestParam(value="qg") String questionGuid,
@@ -164,34 +130,6 @@ public class QuizController {
         }
 
         return redirect;
-	}
-	
-	@RequestMapping(method=GET)
-	public String prevQuestion(	@RequestParam(value="s") String guid,
-							Map<String,Object> model) {
-		String redirect;
-		Sitting sitting = quizService.findSittingByGuid(guid);
-		model.put("sitting", sitting);
-
-        if (!sitting.isFinished()) {
-            if (sitting.hasPreviousQuestion()) {
-                Question question = quizService.previousQuestion(sitting);
-
-                model.put("question", question);
-                model.put("questionViewHelper", new MultipleChoiceHelper(question));
-                if(sittingTimeManager.isExamMonitoring(guid)){
-                    model.put("isExamInTime", "true");
-                    model.put("remainingTime", sittingTimeManager.getExamTimeBySittingGuid(guid).getSeconds());
-                }
-                redirect =  new QuizQuestionViewVisitor(question).getView();
-            } else {
-                redirect = "quiz/sorry";
-            }
-        } else {
-            redirect = QUIZ_THANKS_VIEW;
-        }
-
-		return redirect;
 	}
 	
 	private void putCandidate(Map<String,Object> model, ExamLink examLink) {

@@ -98,42 +98,39 @@
 	//Begin - check progress functionality
 	oltk.include('jquery/time/jquery.timers-1.2.js');
 	oltk.include('jquery/jquery.js');
-	$(document).ready(function(){
-		    var totalTime = ${remainingTime};
-			if(totalTime != ""){
-				 //Display Total Exam time - CountDown.	
-				 $(document).everyTime('1s',function(i) {
-					 if(totalTime > 0){
-                        totalTime = totalTime - 1;
-                        var minutesRight, minutesLeft, secondsRight, secondsLeft;
-                        secondsRight = totalTime % 10;
-                        secondsLeft = parseInt(Math.floor((totalTime % 60) / 10));
-                        minutesRight = parseInt(Math.floor(totalTime / 60));
-                        minutesLeft = parseInt(Math.floor(totalTime / 600));
-                        $('#minute-left').html(minutesLeft);
-                        $('#minute-right').html(minutesRight);
-                        $('#second-left').html(secondsLeft);
-                        $('#second-right').html(secondsRight);
-					 }
-					 else
-					 {
-                         $('#minute-left').html(0);
-                         $('#minute-right').html(0);
-                         $('#second-left').html(0);
-                         $('#second-right').html(0);
-						 $(document).stopTime('displayRemainingTime');
-                         openapplicant.quiz.helper.timer.destroy();
-                         submitResponse();
-                         finishExam();
-					 }
-				 });
+    $(document).ready(function () {
+        var totalTime = ${remainingTime eq null ? 0 : remainingTime};
+        //Display Total Exam time - CountDown.
+        $(document).everyTime('1s', function (i) {
+            if (totalTime > 0) {
+                totalTime = totalTime - 1;
+                var minutesRight, minutesLeft, secondsRight, secondsLeft;
+                secondsRight = totalTime % 10;
+                secondsLeft = parseInt(Math.floor((totalTime % 60) / 10));
+                minutesRight = parseInt(Math.floor(totalTime / 60));
+                minutesLeft = parseInt(Math.floor(totalTime / 600));
+                $('#minute-left').html(minutesLeft);
+                $('#minute-right').html(minutesRight);
+                $('#second-left').html(secondsLeft);
+                $('#second-right').html(secondsRight);
+            }
+            else {
+                $('#minute-left').html(0);
+                $('#minute-right').html(0);
+                $('#second-left').html(0);
+                $('#second-right').html(0);
+                $(document).stopTime('displayRemainingTime');
+                openapplicant.quiz.helper.timer.destroy();
+                submitResponse();
+                finishExam();
+            }
+        });
 
-                $('#finish').click(function() {
-                    openapplicant.quiz.helper.timer.destroy();
-                    submitResponse();
-                    finishExam();
-                });
-			}
+        $('#finish').click(function () {
+            openapplicant.quiz.helper.timer.destroy();
+            submitResponse();
+            finishExam();
+        });
 
         <c:if test="${!(question.timeAllowed eq null) && question.timeAllowed > 0}">
         var questionTime = ${question.timeAllowed * 1000};
@@ -148,8 +145,8 @@
         for (i = 0; i < numberOfLights; i++) {
             section.html(section.html() + '<div id="light_off' + i + '"><img src="<c:url value="/img/quiz/light-off.png"/>"/></div>');
         }
-        var off = function(i) {
-            $('#light_off' + i).fadeTo(timePerLight, 0, function() {
+        var off = function (i) {
+            $('#light_off' + i).fadeTo(timePerLight, 0, function () {
                 if (i < (numberOfLights - 1)) {
                     off(i + 1);
                 } else {
@@ -164,18 +161,18 @@
         <c:if test="${fn:length(sitting.questionsAndResponses) > 8}">
         var elementNumbers = $('#nav-numbers');
         elementNumbers.hoverscroll({
-                    vertical: false,	// Display the list vertically or horizontally
+                    vertical:false, // Display the list vertically or horizontally
 
-                    width:    400,		// Width of the list container
-                    height:   55,		// Height of the list container
+                    width:400, // Width of the list container
+                    height:55, // Height of the list container
 
-                    arrows:   false,		// Display direction indicator arrows or not
-                    arrowsOpacity: 0.7,	// Max possible opacity of the arrows
-                    fixedArrows: false,  // Fixed arrows on the sides of the list (disables arrowsOpacity)
+                    arrows:false, // Display direction indicator arrows or not
+                    arrowsOpacity:0.7, // Max possible opacity of the arrows
+                    fixedArrows:false, // Fixed arrows on the sides of the list (disables arrowsOpacity)
 
-                    rtl:      false,     // Print images from right to left
+                    rtl:false, // Print images from right to left
 
-                    debug:    false     // Debug output in the firebug console
+                    debug:false     // Debug output in the firebug console
                 }
         );
         <c:forEach items="${sitting.questionsAndResponses}" var="questionAndResponse" varStatus="status">
@@ -189,16 +186,16 @@
         var elementLength = linkInsideItemElement.width() + parseInt(linkInsideItemElement.css('padding-left')) + parseInt(linkInsideItemElement.css('padding-right'))
                 + parseInt(linkInsideItemElement.css('margin-left')) + parseInt(linkInsideItemElement.css('margin-right'));
         var firstElement = 5;
-        var lastElement = ${fn:length(sitting.questionsAndResponses)} - firstElement;
+        var lastElement = ${fn:length(sitting.questionsAndResponses)} -firstElement;
         if (${index} > lastElement) {
-            listContainerElement.animate({scrollLeft: (elementLength * lastElement - listContainerElement.width() / 2 + elementLength / 2)}, 1000);
+            listContainerElement.animate({scrollLeft:(elementLength * lastElement - listContainerElement.width() / 2 + elementLength / 2)}, 1000);
         } else if (${index} < firstElement) {
-            listContainerElement.animate({scrollLeft: 0}, 1000);
-            } else {
-            listContainerElement.animate({scrollLeft: (elementLength * ${index} - listContainerElement.width() / 2 + elementLength / 2)}, 1000);
+            listContainerElement.animate({scrollLeft:0}, 1000);
+        } else {
+            listContainerElement.animate({scrollLeft:(elementLength * ${index} -listContainerElement.width() / 2 + elementLength / 2)}, 1000);
         }
         </c:if>
-	});
+    });
 	//End - check progress functionality
 	
 	oltk.include('openapplicant/quiz/helper/timer.js');
@@ -231,7 +228,7 @@
 	
 	function nextQuestion() {
 		if(!submittedResponse) { setTimeout("nextQuestion()", 10); }
-		else { window.location = "<c:url value='/quiz/question?s=${sitting.guid}'/>"; }
+		else { goToQuestion('${sitting.nextQuestion.guid}'); }
 	}
 
     function goToQuestion(qg) {

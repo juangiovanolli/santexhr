@@ -203,6 +203,15 @@ public class Sitting extends DomainObject {
 	private void setNextQuestionIndex(int value) {
 		nextQuestionIndex = value;
 	}
+
+    @Transient
+    public Question getNextQuestion() {
+        if (nextQuestionIndex < questionsAndResponses.size()) {
+            return questionsAndResponses.get(nextQuestionIndex).getQuestion();
+        } else {
+            return questionsAndResponses.get(questionsAndResponses.size() - 1).getQuestion();
+        }
+    }
 	
 	@Valid
 	@Embedded

@@ -1,30 +1,20 @@
 package org.openapplicant.service;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openapplicant.dao.ICandidateDAO;
 import org.openapplicant.dao.ICandidateWorkFlowEventDAO;
 import org.openapplicant.dao.IExamDAO;
 import org.openapplicant.dao.ISittingDAO;
-import org.openapplicant.domain.Candidate;
-import org.openapplicant.domain.CandidateBuilder;
-import org.openapplicant.domain.Exam;
-import org.openapplicant.domain.ExamBuilder;
-import org.openapplicant.domain.Sitting;
-import org.openapplicant.domain.SittingBuilder;
+import org.openapplicant.domain.*;
 import org.openapplicant.domain.event.SittingCompletedEvent;
 import org.openapplicant.domain.event.SittingCreatedEvent;
 import org.openapplicant.domain.question.EssayQuestionBuilder;
 import org.openapplicant.domain.question.Question;
-import org.openapplicant.service.QuizService;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class QuizServiceTest {
@@ -147,7 +137,7 @@ public class QuizServiceTest {
 		
 		replay(allMocks);
 		
-		Question question = quizService.nextQuestion(sitting);
+		Question question = quizService.goToQuestion(sitting, sitting.getNextQuestion().getGuid());
 		
 		verify(allMocks);
 		
