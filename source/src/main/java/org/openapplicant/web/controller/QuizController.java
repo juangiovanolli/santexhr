@@ -12,7 +12,6 @@ import org.openapplicant.service.QuizService;
 import org.openapplicant.service.SittingTimeManager;
 import org.openapplicant.web.view.MultipleChoiceHelper;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 @Controller
@@ -90,34 +88,19 @@ public class QuizController {
     }
 
 	@RequestMapping(method=GET)
-	public String info(	@RequestParam(value="exam") String guid,
+	public String start(	@RequestParam(value="exam") String guid,
 						Map<String,Object> model) {
 		
 		ExamLink examLink = quizService.getExamLinkByGuid(guid);
-		
-		putCandidate(model, examLink);
-		model.put("examLink", examLink);
+        Sitting sitting = quizService.createSitting(((CandidateExamLink) examLink).getCandidate(),
+                ((CandidateExamLink) examLink).getExams().get(0).getArtifactId());
 
-	    return "quiz/info";
-	}
-	
-	@RequestMapping(method=POST)
-	public String info(	@RequestParam(value="examLink") String guid,
-						@ModelAttribute(value="candidate") Candidate candidate,
-						@RequestParam(value="examArtifactId") String examArtifactId,
-						Map<String,Object> model) {
-		
-		ExamLink examLink = quizService.getExamLinkByGuid(guid);
-	
-	    candidate = quizService.resolveCandidate(candidate, examLink.getCompany());
-	    Sitting sitting = quizService.createSitting(candidate, examArtifactId);
-	    
-		if(sitting.isFinished()) {
-			model.put("error", "This exam has already been completed.");
-			return "quiz/sorry";
-		}
-		
-	    return "redirect:question?s="+sitting.getGuid();
+        if(sitting.isFinished()) {
+            model.put("error", "This exam has already been completed.");
+            return "quiz/sorry";
+        }
+
+        return "redirect:question?s="+sitting.getGuid();
 	}
 
     @RequestMapping(method = GET)
@@ -243,12 +226,15 @@ public class QuizController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String finish(@RequestParam("guid") String guid) {
+	public String finish(@RequestParam("guid") String guid,
+                         Map<String, Object> model) {
         logger.debug("********** Finish Exam Client Request");
 		if(sittingTimeManager.isExamMonitoring(guid)){
             logger.debug("********** Removing sitting from timeManager");
             sittingTimeManager.clearExamTimeMonitorBySitting(guid);
 		}
+        Sitting sitting = quizService.findSittingByGuid(guid);
+        model.put("completionText", sitting.getCandidate().getCompany().getCompletionText());
 		return QUIZ_THANKS_VIEW;
 	}
 }
